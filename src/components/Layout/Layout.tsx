@@ -1,34 +1,23 @@
-import { Route, Routes } from "react-router-dom";
-import { ContentContainer, GlobalContainer } from "../../screens/Home/style";
+import React, { ReactNode } from "react";
+import { Outlet } from "react-router-dom";
+import { Layout } from "antd";
 import Navbar from "../Navbar/Navbar";
-// import Rightbar from "../Rightbar/Rightbar";
 import Sidebar from "../Sidebar/Sidebar";
-import { Home } from "../../screens/pages";
-import CreateSchool from "../../screens/CreateSchool/CreateSchool";
+import { GlobalContainer } from "../../screens/Home/style";
 
-import React, { ReactNode, useState } from "react";
-import {
-  UploadOutlined,
-  UserOutlined,
-  VideoCameraOutlined,
-} from "@ant-design/icons";
-import { Layout, Menu, theme } from "antd";
-import NavbarSmallScreen from "../Navbar/NavbarSmallScreen";
-const { Header, Content, Footer, Sider } = Layout;
+const { Header, Content } = Layout;
 
-const AppLayout = (props: any) => {
-  // const {
-  //   token: { colorBgContainer },
-  // } = theme?.useToken();
-  const [collapsed, setCollapsed] = useState(false);
+type AppLayoutProps = {
+  children?: ReactNode;
+};
 
-  console.log(props.children);
+const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
   return (
     <GlobalContainer>
-      <Layout>
+      <Layout style={{ minHeight: "100vh" }}>
         <Sidebar />
 
-        <Layout className="content-left-width">
+        <Layout className="content-left-width" style={{ transition: "all 0.2s ease" }}>
           <Header
             style={{
               padding: "16px",
@@ -36,19 +25,16 @@ const AppLayout = (props: any) => {
               marginBottom: 20,
               position: "sticky",
               top: 0,
-              zIndex: 1,
+              zIndex: 100,
               width: "100%",
-              // height: 90,
             }}
             className="navbar-styles"
           >
             <Navbar />
-            {/* <NavbarSmallScreen /> */}
           </Header>
 
-          <Content className="content-styles">
-            <Layout style={{ flex: 3 }}>{props.children}</Layout>
-            {/* <Rightbar /> */}
+          <Content className="content-styles" style={{ padding: "0 16px 32px 16px" }}>
+            {children ? children : <Outlet />}
           </Content>
         </Layout>
       </Layout>

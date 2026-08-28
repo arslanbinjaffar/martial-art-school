@@ -1,9 +1,9 @@
-import { Routes, Route } from "react-router-dom";
+import React from "react";
+import { Routes, Route, Navigate } from "react-router-dom";
 import {
   Login,
   VerifyOtp,
   Dashboard,
-  Home,
   CreateUser,
   Membership,
   Classes,
@@ -29,166 +29,46 @@ import EditFranchise from "../screens/Franchise/EditFranchise/EditFranchise";
 
 function AppRoutes() {
   return (
-    <>
-      <Routes>
-        {/* Auth Routes */}
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<CreateUser />} />
-        <Route path="/forget-password" element={<ForgetPassword />} />
-        <Route path="/register/verify-otp" element={<Otp />} />
-        <Route
-          path="/register/create-new-password"
-          element={<CreatePassword />}
-        />
+    <Routes>
+      {/* Public Auth Routes */}
+      <Route path="/login" element={<Login />} />
+      <Route path="/register" element={<CreateUser />} />
+      <Route path="/forget-password" element={<ForgetPassword />} />
+      <Route path="/register/verify-otp" element={<Otp />} />
+      <Route path="/register/create-new-password" element={<CreatePassword />} />
 
-        {/* Core App Routes with AppLayout */}
-        <Route
-          path="/"
-          element={
-            <AppLayout>
-              <Home />
-            </AppLayout>
-          }
-        />
-        <Route
-          path="/dashboard"
-          element={
-            <AppLayout>
-              <Dashboard />
-            </AppLayout>
-          }
-        />
-        <Route
-          path="/school/create"
-          element={
-            <AppLayout>
-              <CreateSchool />
-            </AppLayout>
-          }
-        />
-        <Route
-          path="/school/edit/:schoolId"
-          element={
-            <AppLayout>
-              <EditSchool />
-            </AppLayout>
-          }
-        />
-        <Route
-          path="/branch/list"
-          element={
-            <AppLayout>
-              <ListBranch />
-            </AppLayout>
-          }
-        />
-        <Route
-          path="/branch/create"
-          element={
-            <AppLayout>
-              <CreateBranch />
-            </AppLayout>
-          }
-        />
-        <Route
-          path="/branch/edit/:branchId"
-          element={
-            <AppLayout>
-              <EditBranch />
-            </AppLayout>
-          }
-        />
-        <Route
-          path="/franchise/list"
-          element={
-            <AppLayout>
-              <ListFranchise />
-            </AppLayout>
-          }
-        />
-        <Route
-          path="/franchise/create"
-          element={
-            <AppLayout>
-              <CreateFranchise />
-            </AppLayout>
-          }
-        />
-        <Route
-          path="/franchise/edit/:franchiseId"
-          element={
-            <AppLayout>
-              <EditFranchise />
-            </AppLayout>
-          }
-        />
+      {/* Main App Layout Shell with smooth persistent sidebar & header */}
+      <Route element={<AppLayout />}>
+        <Route path="/" element={<Dashboard />} />
+        <Route path="/dashboard" element={<Dashboard />} />
 
-        {/* Membership & Payment Routes */}
-        <Route
-          path="/membership"
-          element={
-            <AppLayout>
-              <Membership />
-            </AppLayout>
-          }
-        />
-        <Route
-          path="/payment"
-          element={
-            <AppLayout>
-              <PaymentAndWallet />
-            </AppLayout>
-          }
-        />
-        <Route
-          path="/credit-card/create"
-          element={
-            <AppLayout>
-              <CreateCreditCard />
-            </AppLayout>
-          }
-        />
+        {/* School & Franchise Management */}
+        <Route path="/school/create" element={<CreateSchool />} />
+        <Route path="/school/edit/:schoolId" element={<EditSchool />} />
+        <Route path="/branch/list" element={<ListBranch />} />
+        <Route path="/branch/create" element={<CreateBranch />} />
+        <Route path="/branch/edit/:branchId" element={<EditBranch />} />
+        <Route path="/franchise/list" element={<ListFranchise />} />
+        <Route path="/franchise/create" element={<CreateFranchise />} />
+        <Route path="/franchise/edit/:franchiseId" element={<EditFranchise />} />
+
+        {/* Membership & Payment */}
+        <Route path="/membership" element={<Membership />} />
+        <Route path="/payment" element={<PaymentAndWallet />} />
+        <Route path="/credit-card/create" element={<CreateCreditCard />} />
 
         {/* Martial Arts Classes, Bookings & Passes */}
-        <Route
-          path="/classes"
-          element={
-            <AppLayout>
-              <Classes />
-            </AppLayout>
-          }
-        />
-        <Route
-          path="/booking"
-          element={
-            <AppLayout>
-              <Booking />
-            </AppLayout>
-          }
-        />
-        <Route
-          path="/qr-code"
-          element={
-            <AppLayout>
-              <QrCode />
-            </AppLayout>
-          }
-        />
+        <Route path="/classes" element={<Classes />} />
+        <Route path="/booking" element={<Booking />} />
+        <Route path="/qr-code" element={<QrCode />} />
 
-        {/* Settings Routes */}
-        <Route
-          path="/setting"
-          element={
-            <AppLayout>
-              <Settings />
-            </AppLayout>
-          }
-        />
+        {/* Settings */}
+        <Route path="/setting" element={<Settings />} />
+      </Route>
 
-        {/* 404 Catch All */}
-        <Route path="*" element={<ErrorPage404 />} />
-      </Routes>
-    </>
+      {/* 404 Catch All */}
+      <Route path="*" element={<ErrorPage404 />} />
+    </Routes>
   );
 }
 
