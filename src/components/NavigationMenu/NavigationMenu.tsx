@@ -8,133 +8,154 @@ import classes from "../../assets/icons/ic_classes.svg";
 import booking from "../../assets/icons/ic_booking.svg";
 import qrCode from "../../assets/icons/ic_qr_code.svg";
 import setting from "../../assets/icons/ic_setting.svg";
-import { childListOfBooking, childListOfSetting } from "../Sidebar/constants";
-import { SidebarStyle } from "../Sidebar/style";
 import { NavigationMenuStyled } from "./styles";
+
 type MenuItem = Required<MenuProps>["items"][number];
 
-const menuLinks: any = {
+const routeKeyMap: Record<string, string> = {
   dashboard: "/",
   createSchool: "/school/create",
+  listbranch: "/branch/list",
+  listFranchise: "/franchise/list",
   membership: "/membership",
   payment: "/payment",
   classes: "/classes",
-  booking: "",
+  booking: "/booking",
+  "booking-current": "/booking?tab=current",
+  "booking-previous": "/booking?tab=previous",
   qrCode: "/qr-code",
-  setting: "",
-  listbranch: "/branch/list",
-  listFranchise: "/franchise/list",
-};
-
-const menuLinksKeys: any = {
-  dashboard: "dashboard",
-  createSchool: "createSchool",
-  membership: "membership",
-  payment: "payment",
-  classes: "classes",
-  booking: "booking",
-  qrCode: "qr-code",
-  setting: "setting",
-  listbranch: "listbranch",
-  listFranchise: "listFranchise",
+  "setting-sub-account": "/setting?tab=sub-account",
+  "setting-change-password": "/setting?tab=change-password",
+  "setting-delete-account": "/setting?tab=delete-account",
+  "setting-enrolled-school": "/setting?tab=enrolled-school",
 };
 
 const NavigationMenu = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const getMenuIcon = (file: any) => <img src={file} alt="" />;
+  const getMenuIcon = (file: any) => <img src={file} alt="" style={{ width: 18, height: 18 }} />;
 
-  const navigation = (link: string, key: string) => {
-    navigate(link);
-  };
-
-  const getLabel = (label: string, link: string, key: string) => (
-    <div onClick={() => (link ? navigation(link, key) : "")}>{label}</div>
-  );
   const sidebarData: MenuItem[] = [
     {
-      key: menuLinksKeys.dashboard,
-      label: getLabel("Dasboard", menuLinks.dashboard, menuLinks.dashboard),
+      key: "dashboard",
+      label: "Dashboard",
       icon: getMenuIcon(dashboard),
     },
     {
-      key: menuLinksKeys.createSchool,
-      label: getLabel(
-        "Create School",
-        menuLinks.createSchool,
-        menuLinksKeys.createSchool
-      ),
+      key: "createSchool",
+      label: "School Profile",
       icon: getMenuIcon(dashboard),
     },
     {
-      key: menuLinksKeys.listbranch,
-      label: getLabel("Branch", menuLinks.listbranch, menuLinksKeys.listbranch),
+      key: "listbranch",
+      label: "Branches",
       icon: getMenuIcon(dashboard),
     },
     {
-      key: menuLinksKeys.listFranchise,
-      label: getLabel(
-        "Franchise",
-        menuLinks.listFranchise,
-        menuLinksKeys.listFranchise
-      ),
+      key: "listFranchise",
+      label: "Franchises",
       icon: getMenuIcon(dashboard),
     },
     {
-      key: menuLinksKeys.membership,
-      label: getLabel(
-        "Membership",
-        menuLinks.membership,
-        menuLinksKeys.createSchool
-      ),
+      key: "membership",
+      label: "Membership",
       icon: getMenuIcon(membership),
     },
     {
-      key: menuLinksKeys.payment,
-      label: getLabel("Payment", menuLinks.payment, menuLinksKeys.payment),
+      key: "payment",
+      label: "Payment & Wallet",
       icon: getMenuIcon(payment),
     },
     {
-      key: menuLinksKeys.classes,
-      label: getLabel("Classes", menuLinks.classes, menuLinksKeys.classes),
+      key: "classes",
+      label: "Classes & Timetable",
       icon: getMenuIcon(classes),
     },
     {
-      key: menuLinksKeys.booking,
-      label: getLabel("Booking", menuLinks.booking, menuLinksKeys.booking),
-      children: childListOfBooking,
+      key: "booking",
+      label: "Bookings",
       icon: getMenuIcon(booking),
+      children: [
+        {
+          key: "booking-current",
+          label: "Current Bookings",
+        },
+        {
+          key: "booking-previous",
+          label: "Past Training History",
+        },
+      ],
     },
     {
-      key: menuLinksKeys.qrCode,
-      label: getLabel("QR Code", menuLinks.qrCode, menuLinksKeys.qrCode),
+      key: "qrCode",
+      label: "Member QR Pass",
       icon: getMenuIcon(qrCode),
     },
     {
-      key: menuLinksKeys.setting,
-      label: getLabel("Setting", menuLinks.setting, menuLinksKeys.setting),
-      children: childListOfSetting,
+      key: "setting",
+      label: "Settings",
       icon: getMenuIcon(setting),
+      children: [
+        {
+          key: "setting-sub-account",
+          label: "Sub Account",
+        },
+        {
+          key: "setting-change-password",
+          label: "Change Password",
+        },
+        {
+          key: "setting-enrolled-school",
+          label: "Enrolled School",
+        },
+        {
+          key: "setting-delete-account",
+          label: "Delete Account",
+        },
+      ],
     },
   ];
 
-  let defaultSelectedKey = "";
-
-  Object.keys(menuLinks).forEach((key) => {
-    if (location.pathname === menuLinks[key]) {
-      defaultSelectedKey = key;
+  const handleMenuClick: MenuProps["onClick"] = (e) => {
+    const targetRoute = routeKeyMap[e.key];
+    if (targetRoute) {
+      navigate(targetRoute);
     }
-  });
+  };
+
+  // Determine active selected key
+  let selectedKey = "dashboard";
+  if (location.pathname === "/school/create") selectedKey = "createSchool";
+  else if (location.pathname.startsWith("/branch")) selectedKey = "listbranch";
+  else if (location.pathname.startsWith("/franchise")) selectedKey = "listFranchise";
+  else if (location.pathname.startsWith("/membership")) selectedKey = "membership";
+  else if (location.pathname.startsWith("/payment") || location.pathname.startsWith("/credit-card")) selectedKey = "payment";
+  else if (location.pathname.startsWith("/classes")) selectedKey = "classes";
+  else if (location.pathname.startsWith("/booking")) {
+    selectedKey = location.search.includes("previous") ? "booking-previous" : "booking-current";
+  } else if (location.pathname.startsWith("/qr-code")) selectedKey = "qrCode";
+  else if (location.pathname.startsWith("/setting")) {
+    if (location.search.includes("change-password")) selectedKey = "setting-change-password";
+    else if (location.search.includes("enrolled-school")) selectedKey = "setting-enrolled-school";
+    else if (location.search.includes("delete-account")) selectedKey = "setting-delete-account";
+    else selectedKey = "setting-sub-account";
+  }
+
   return (
     <NavigationMenuStyled>
-      <div className="logo text-center">
-        <img src={logo} alt="" />
+      <div
+        className="logo text-center cursor-pointer mb-3"
+        style={{ cursor: "pointer" }}
+        onClick={() => navigate("/")}
+      >
+        <img src={logo} alt="Martial Arts Logo" />
       </div>
       <Menu
-        defaultSelectedKeys={[defaultSelectedKey]}
+        selectedKeys={[selectedKey]}
         mode="inline"
         items={sidebarData}
+        onClick={handleMenuClick}
       />
     </NavigationMenuStyled>
   );

@@ -136,9 +136,9 @@ const RegisterUser = () => {
       ...registerUserValues,
       roleId: 1,
       channel: "Web",
-      address: userLocation?.address,
-      city: userLocation?.city,
-      state: userLocation?.state,
+      address: userLocation?.address || "",
+      city: userLocation?.city || "",
+      state: userLocation?.state || "",
     };
     try {
       setIsLoading(true);

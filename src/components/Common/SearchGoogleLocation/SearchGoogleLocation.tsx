@@ -23,22 +23,33 @@ const SearchGoogleLocation = ({
   const [options, setOptions] = useState([]);
   const [searchValue, setSearchValue] = useState(value);
   const handleOnChange = async (e: any) => {
-    setSearchValue(e.target.value);
+    const text = e.target.value;
+    setSearchValue(text);
+    setFieldValue(text);
 
-    const response = await fetch(
-      `https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${e.target.value}&key=AIzaSyC6PLT5-mrVFJcFqFixXZTW4d7Fj1EZg3Q`
-    );
+    if (!text.trim()) {
+      setOptions([]);
+      return;
+    }
 
-    const data = await response.json();
+    try {
+      const response = await fetch(
+        `https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${text}&key=AIzaSyC6PLT5-mrVFJcFqFixXZTW4d7Fj1EZg3Q`
+      );
 
-    if (data && data.predictions && data.predictions.length > 0) {
-      let arr: any = [];
-      data.predictions.forEach((item: any) => {
-        arr.push({ label: item.description, value: item.place_id });
-      });
+      const data = await response.json();
 
-      setOptions(arr);
-    } else {
+      if (data && data.predictions && data.predictions.length > 0) {
+        let arr: any = [];
+        data.predictions.forEach((item: any) => {
+          arr.push({ label: item.description, value: item.place_id });
+        });
+
+        setOptions(arr);
+      } else {
+        setOptions([]);
+      }
+    } catch {
       setOptions([]);
     }
   };

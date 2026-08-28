@@ -4,12 +4,12 @@ import CustormButtonStyle from "./style";
 
 export type ButtonProps = {
   title: string;
-  type: "button" | "submit" | "reset" | undefined;
-  bgcolor: string;
+  type?: "button" | "submit" | "reset" | undefined;
+  bgcolor?: string;
   disabled?: boolean;
-  width: string;
-  color: string;
-  padding: string;
+  width?: string;
+  color?: string;
+  padding?: string;
   clicked?: () => void;
   form?: any;
   key?: string | number;
@@ -26,11 +26,11 @@ export type ButtonProps = {
 const CustomButton = ({
   title,
   type = "button",
-  bgcolor,
+  bgcolor = "transparent",
   disabled,
-  width,
-  color,
-  padding,
+  width = "auto",
+  color = "inherit",
+  padding = "8px 16px",
   clicked,
   form,
   key,

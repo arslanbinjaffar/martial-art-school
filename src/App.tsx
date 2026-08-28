@@ -93,17 +93,13 @@ function App() {
           FallbackComponent={ErrorPage}
           onError={() => console.log("Error happened")}
         >
-          {loading || userLocationLoading ? (
-            <IntroScreen />
-          ) : (
-            <Suspense fallback={<h6>Loading...</h6>}>
-              <AppRoutes />
-            </Suspense>
-          )}
+          <Suspense fallback={<IntroScreen />}>
+            <AppRoutes />
+          </Suspense>
         </ErrorBoundary>
       </SkeletonTheme>
     </>
   );
 }
 
-export default App;
+export default App

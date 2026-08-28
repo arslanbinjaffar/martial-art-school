@@ -40,17 +40,17 @@ const PlacesAutoCompleteInput: React.FC<placesAutoCompleteInputProps> = ({
           name={name}
           apiKey={MAP_API}
           onPlaceSelected={(place: any) =>
-            handleChange(place.formatted_address || "")
+            handleChange(place?.formatted_address || place?.name || "")
           }
           onChange={(e: any) => {
-            if (!e.target.value) {
-              handleChange("");
-            }
+            handleChange(e.target.value);
           }}
           defaultValue={value}
           placeholder={placeholder}
           className={`ant-input ${
-            formik.errors.address ? "is-invalid" : "customInput"
+            formik?.errors?.[name] && formik?.touched?.[name]
+              ? "is-invalid"
+              : "customInput"
           }`}
         />
       </div>

@@ -159,7 +159,6 @@ const Login = () => {
                                   ? "is-invalid"
                                   : "customInput"
                               }
-                              textAlign="end"
                             />
                           </div>
                           <div className="mt-20">
@@ -184,7 +183,6 @@ const Login = () => {
                                   ? "is-invalid"
                                   : "customPasswordInput"
                               }
-                              textAlign="end"
                             />
                           </div>
                           <div className="d-flex justify-content-between align-items-center mt-20">

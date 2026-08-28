@@ -72,11 +72,11 @@ const RegisterUser = () => {
     (state) => state.userLocation
   );
   // get Validations from redux appData
-  const {
-    countryName: {
-      results: { countryCode, name },
-    },
-  } = useAppSelector((state) => state.appData.data);
+  const appData = useAppSelector((state) => state.appData?.data);
+  const countryCode =
+    appData?.countryName?.results?.countryCode || "+1";
+  const name =
+    appData?.countryName?.results?.name || "United States";
   // create user initial values
   useEffect(() => {
     const countrySelect = document.querySelector(

@@ -21,11 +21,11 @@ const useOauthLogin = () => {
   const toastId = useRef<any>(null);
   const dispatch = useDispatch();
 
-  const {
-    countryName: {
-      results: { countryCode, name },
-    },
-  } = useAppSelector((state: RootState) => state.appData.data);
+  const appData = useAppSelector((state: RootState) => state.appData?.data);
+  const countryCode =
+    appData?.countryName?.results?.countryCode || "+1";
+  const name =
+    appData?.countryName?.results?.name || "United States";
   const { result } = useAppSelector((state: RootState) => state.userLocation);
 
   // signin

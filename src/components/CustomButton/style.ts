@@ -1,16 +1,16 @@
 import styled from "styled-components";
 
 type CustomButtonProps = {
-  textTransform: string;
-  color: string;
-  padding: string;
-  border: string;
-  margin: string;
-  fontFamily: string;
-  bgcolor: string;
-  width: string;
-  fontSize: string;
-  borderRadius: string;
+  textTransform?: string;
+  color?: string;
+  padding?: string;
+  border?: string;
+  margin?: string;
+  fontFamily?: string;
+  bgcolor?: string;
+  width?: string;
+  fontSize?: string;
+  borderRadius?: string;
 };
 const CustomButtonStyle = styled.div<CustomButtonProps>`
   width: ${(props) => props.width};

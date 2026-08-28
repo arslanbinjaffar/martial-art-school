@@ -5,22 +5,20 @@ import {
   Dashboard,
   Home,
   CreateUser,
+  Membership,
+  Classes,
+  Booking,
+  QrCode,
+  Settings,
+  PaymentAndWallet,
+  CreateCreditCard,
   ErrorPage404,
 } from "../screens/pages";
 import ForgetPassword from "../screens/ForgetPassword/ForgetPasword";
 import Otp from "../screens/ForgetPassword/Otp/Otp";
 import CreatePassword from "../screens/ForgetPassword/CreatePassword/CreatePassword";
-import CustomSelects from "../components/CustomSelect/CustomSelects";
-import { Select } from "antd";
-import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "../redux/store";
-import { setLanguage } from "../redux/features/selectedLanguageSlice";
 import CreateSchool from "../screens/CreateSchool/CreateSchool";
-import Layout from "antd/lib/layout/layout";
 import AppLayout from "../components/Layout/Layout";
-// import { loginData } from "../App";
-import { lazy, useEffect } from "react";
-import { local_storage_admin_key } from "../utils/axios.utils";
 import EditSchool from "../screens/CreateSchool/EditSchool/EditSchool";
 import CreateBranch from "../screens/Branches/CreateBranch/CreateBranch";
 import EditBranch from "../screens/Branches/EditBranch/EditBranch";
@@ -30,33 +28,10 @@ import CreateFranchise from "../screens/Franchise/CreateFranchise/CreateFranchis
 import EditFranchise from "../screens/Franchise/EditFranchise/EditFranchise";
 
 function AppRoutes() {
-  const dispatch = useDispatch();
-  const handleChange = (value: string) => {
-    dispatch(setLanguage(value));
-  };
-  const { selectedLanguage } = useSelector(
-    (state: RootState) => state.selectedLanguage
-  );
-
   return (
     <>
-      {/* <div className="language-select">
-        <div className="language-select-inner">
-          <Select
-            defaultValue={selectedLanguage}
-            style={{ width: 120 }}
-            onChange={handleChange}
-            options={[
-              { value: "en", label: "English" },
-              { value: "es", label: "Spanish (Español)" },
-              { value: "pt", label: "Portuguese" },
-              { value: "ar", label: "Arabic (العربية)" },
-              { value: "ur", label: "Urdu (اردو)" },
-            ]}
-          />
-        </div>
-      </div> */}
       <Routes>
+        {/* Auth Routes */}
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<CreateUser />} />
         <Route path="/forget-password" element={<ForgetPassword />} />
@@ -66,19 +41,22 @@ function AppRoutes() {
           element={<CreatePassword />}
         />
 
+        {/* Core App Routes with AppLayout */}
         <Route
-          path={"/"}
+          path="/"
           element={
             <AppLayout>
               <Home />
             </AppLayout>
           }
         />
-        <Route path="/createSchoolprofile"
-        element={
-          <AppLayout>
-          </AppLayout>
-        }
+        <Route
+          path="/dashboard"
+          element={
+            <AppLayout>
+              <Dashboard />
+            </AppLayout>
+          }
         />
         <Route
           path="/school/create"
@@ -112,7 +90,6 @@ function AppRoutes() {
             </AppLayout>
           }
         />
-
         <Route
           path="/branch/edit/:branchId"
           element={
@@ -121,7 +98,6 @@ function AppRoutes() {
             </AppLayout>
           }
         />
-
         <Route
           path="/franchise/list"
           element={
@@ -130,7 +106,6 @@ function AppRoutes() {
             </AppLayout>
           }
         />
-
         <Route
           path="/franchise/create"
           element={
@@ -139,7 +114,6 @@ function AppRoutes() {
             </AppLayout>
           }
         />
-
         <Route
           path="/franchise/edit/:franchiseId"
           element={
@@ -149,7 +123,69 @@ function AppRoutes() {
           }
         />
 
-        {/* error page */}
+        {/* Membership & Payment Routes */}
+        <Route
+          path="/membership"
+          element={
+            <AppLayout>
+              <Membership />
+            </AppLayout>
+          }
+        />
+        <Route
+          path="/payment"
+          element={
+            <AppLayout>
+              <PaymentAndWallet />
+            </AppLayout>
+          }
+        />
+        <Route
+          path="/credit-card/create"
+          element={
+            <AppLayout>
+              <CreateCreditCard />
+            </AppLayout>
+          }
+        />
+
+        {/* Martial Arts Classes, Bookings & Passes */}
+        <Route
+          path="/classes"
+          element={
+            <AppLayout>
+              <Classes />
+            </AppLayout>
+          }
+        />
+        <Route
+          path="/booking"
+          element={
+            <AppLayout>
+              <Booking />
+            </AppLayout>
+          }
+        />
+        <Route
+          path="/qr-code"
+          element={
+            <AppLayout>
+              <QrCode />
+            </AppLayout>
+          }
+        />
+
+        {/* Settings Routes */}
+        <Route
+          path="/setting"
+          element={
+            <AppLayout>
+              <Settings />
+            </AppLayout>
+          }
+        />
+
+        {/* 404 Catch All */}
         <Route path="*" element={<ErrorPage404 />} />
       </Routes>
     </>

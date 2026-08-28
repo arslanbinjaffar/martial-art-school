@@ -3,18 +3,20 @@ import { loginDataTypes } from "../redux/features/types";
 // base urls
 const liveBaseUrl =
   "https://www.ennvisionapistore.com:8443/martialapp_apis/api/";
-const testBaseUrl = "https://www.ennvisionapistore.com:8443/martialapp_apis/";
+const localBackendUrl =
+  process.env.REACT_APP_API_URL || "http://localhost:8000/";
 const liveMediaUrl = "https://ennvisionapistore.com:8443";
-const testMediaUrl = "https://ennvisionapistore.com:8443";
+const localMediaUrl =
+  process.env.REACT_APP_MEDIA_URL || "http://localhost:8000/uploads";
 const domianLiveUrl = "https://maritalschool.innovatelq.com/";
-const domianTestUrl = "https://maritalschool.innovatelq.com/";
+const domianTestUrl = "http://localhost:3000/";
 
 const isLive = false;
 
 // base urls
-export const base_url = isLive ? liveBaseUrl : testBaseUrl;
+export const base_url = isLive ? liveBaseUrl : localBackendUrl;
 export const live_base_url = isLive ? domianLiveUrl : domianTestUrl;
-export const media_base_url = isLive ? liveMediaUrl : testMediaUrl;
+export const media_base_url = isLive ? liveMediaUrl : localMediaUrl;
 
 // user urls
 export const app_data_url = "api/getAppData";
