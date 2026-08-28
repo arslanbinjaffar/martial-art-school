@@ -100,45 +100,31 @@ export const HeroSectionStyle = styled.div`
 `;
 export const GlobalContainer = styled.div`
   display: flex;
-  margin: 0 0 0 16px;
-  gap: 16px;
-  @media screen and (max-width: 991px) {
-    margin-left: 0;
-  }
+  width: 100%;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
 
   .content-left-width {
-    margin-left: 250px;
+    margin-left: 280px;
+    width: calc(100% - 280px);
+    max-width: calc(100% - 280px);
+    flex: 1;
 
     @media screen and (max-width: 991px) {
       margin-left: 0;
+      width: 100%;
+      max-width: 100%;
     }
+  }
+
+  .content-styles {
+    width: 100%;
+    max-width: 100%;
   }
 
   .page-content {
-    margin-left: 16px;
-    // margin-right: 400px;
-  }
-
-  .right-sider-width {
-    flex: 0 0 400px !important;
-    max-width: 400px !important;
-    width: 430px !important;
-    display: block;
-    @media screen and (max-width: 1670px) {
-      flex: 0 0 300px !important;
-      max-width: 300px !important;
-      width: 330px !important;
-    }
-
-    @media screen and (max-width: 1200px) {
-      flex: 0 0 200px !important;
-      max-width: 200px !important;
-      width: 100% !important;
-    }
-
-    @media screen and ${mediaDeviceMax.tabletL} {
-      display: none !important;
-    }
+    width: 100%;
   }
 `;
 

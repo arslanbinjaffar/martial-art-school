@@ -95,7 +95,7 @@ const QrCode = () => {
   return (
     <QrCodeStyled>
       <Head title="Member QR Check-in" />
-      <Container fluid className="py-4 px-md-4">
+      <div className="w-100 py-2">
         <div className="text-center mb-4">
           <h1 className="page-title">📱 Dojo Digital Check-In Pass</h1>
           <p className="page-subtitle">
@@ -219,7 +219,7 @@ const QrCode = () => {
             </Modal.Footer>
           </Form>
         </Modal>
-      </Container>
+      </div>
     </QrCodeStyled>
   );
 };

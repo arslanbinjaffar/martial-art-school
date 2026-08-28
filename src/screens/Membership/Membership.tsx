@@ -123,7 +123,7 @@ const Membership = () => {
   return (
     <MembershipStyled>
       <Head title="Membership Plans" />
-      <Container fluid className="py-4 px-md-4">
+      <div className="w-100 py-2">
         <div className="text-center mb-5">
           <h1 className="page-title">🥋 Membership & Training Plans</h1>
           <p className="page-subtitle">
@@ -255,7 +255,7 @@ const Membership = () => {
             </Modal.Footer>
           </Form>
         </Modal>
-      </Container>
+      </div>
     </MembershipStyled>
   );
 };

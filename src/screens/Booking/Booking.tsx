@@ -90,7 +90,7 @@ const Booking = () => {
   return (
     <BookingStyled>
       <Head title="Class Bookings" />
-      <Container fluid className="py-4 px-md-4">
+      <div className="w-100 py-2">
         <div className="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
           <div>
             <h1 className="page-title">📅 Class Bookings & Reservations</h1>
@@ -220,7 +220,7 @@ const Booking = () => {
             )}
           </Card>
         )}
-      </Container>
+      </div>
     </BookingStyled>
   );
 };

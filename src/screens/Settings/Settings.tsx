@@ -204,7 +204,7 @@ const Settings = () => {
   return (
     <SettingsStyled>
       <Head title="Account Settings" />
-      <Container fluid className="py-4 px-md-4">
+      <div className="w-100 py-2">
         <div className="mb-4">
           <h1 className="page-title">⚙️ Dojo & Account Settings</h1>
           <p className="page-subtitle">
@@ -598,7 +598,7 @@ const Settings = () => {
             </Card>
           </Col>
         </Row>
-      </Container>
+      </div>
     </SettingsStyled>
   );
 };

@@ -451,29 +451,6 @@ export default Dashboard;
 
 const DashboardStyled = styled.div`
   background: transparent;
-
-  .banner-container {
-    background: linear-gradient(135deg, ${primaryColor} 0%, #008ebc 50%, #005a78 100%);
-    border-radius: 20px;
-    padding: 28px 32px;
-    color: ${whiteColor};
-    box-shadow: 0 8px 24px rgba(0, 176, 233, 0.2);
-
-    .banner-content {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 20px;
-    }
-
-    .banner-left {
-      max-width: 650px;
-    }
-
-    .custom-tag {
-      background: rgba(255, 255, 255, 0.2);
-      border: 1px solid rgba(255, 255, 255, 0.4);
       color: ${whiteColor};
       border-radius: 12px;
       padding: 3px 12px;
