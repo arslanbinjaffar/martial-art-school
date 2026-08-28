@@ -126,14 +126,23 @@ const Dashboard: React.FC = () => {
       {/* Top Banner with EnnVisions Cyan & Blue Theme */}
       <div className="banner-container">
         <div className="banner-content">
-          <div className="banner-left">
-            <Tag color="#00B0E9" className="custom-tag">
-              🥋 Martial Arts School Portal
-            </Tag>
-            <h1 className="banner-title">Welcome back, {userName}!</h1>
-            <p className="banner-subtitle">
-              Manage your Dojo schedule, track belt progression milestones, and coordinate student attendance.
-            </p>
+          <div className="banner-left d-flex align-items-center gap-3">
+            <Avatar
+              size={64}
+              src={user?.profileImageURL || (user as any)?.profilePictureURL || (localStorage.getItem("user_profile_picture") as string)}
+              icon={<UserOutlined />}
+              shape="square"
+              style={{ borderRadius: "16px", border: "2px solid rgba(255,255,255,0.8)", flexShrink: 0 }}
+            />
+            <div>
+              <Tag color="#00B0E9" className="custom-tag">
+                🥋 Martial Arts School Portal
+              </Tag>
+              <h1 className="banner-title">Welcome back, {userName}!</h1>
+              <p className="banner-subtitle">
+                Manage your Dojo schedule, track belt progression milestones, and coordinate student attendance.
+              </p>
+            </div>
           </div>
           <div className="banner-actions">
             <CustomButton

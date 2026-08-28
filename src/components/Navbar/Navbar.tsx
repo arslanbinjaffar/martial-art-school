@@ -359,9 +359,9 @@ function Navbar() {
                 <Badge dot color="green">
                   <Avatar
                     size={44}
-                    src={user?.profileImageURL || profileIcon}
+                    src={user?.profileImageURL || (user as any)?.profilePictureURL || localStorage.getItem("user_profile_picture") || profileIcon}
                     shape="square"
-                    style={{ borderRadius: "12px" }}
+                    style={{ borderRadius: "12px", objectFit: "cover" }}
                   />
                 </Badge>
               </div>

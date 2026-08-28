@@ -107,7 +107,17 @@ const QrCode = () => {
           <Col lg={5} md={8} sm={12}>
             <Card className="qr-card text-center p-4">
               <div className="member-header mb-3">
-                <div className="avatar-circle">🥋</div>
+                <div className="avatar-circle overflow-hidden d-inline-flex align-items-center justify-content-center">
+                  {user?.profileImageURL || (user as any)?.profilePictureURL || localStorage.getItem("user_profile_picture") ? (
+                    <img
+                      src={user?.profileImageURL || (user as any)?.profilePictureURL || (localStorage.getItem("user_profile_picture") as string)}
+                      alt="Avatar"
+                      style={{ width: "100%", height: "100%", objectFit: "cover", borderRadius: "50%" }}
+                    />
+                  ) : (
+                    <span>🥋</span>
+                  )}
+                </div>
                 <h3 className="member-name">{studentName}</h3>
                 <span className="member-role">Rank: Active Practitioner • Member ID: #{user?.id || 1}</span>
               </div>

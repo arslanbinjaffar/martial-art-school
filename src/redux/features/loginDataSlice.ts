@@ -51,13 +51,33 @@ const loginDataSlice = createSlice({
         if (draft.data !== null && draft.data.userDetails) {
           draft.data.userDetails = {
             ...draft.data.userDetails,
-            ...(payload.firstName !== undefined && { userFirstName: payload.firstName }),
-            ...(payload.lastName !== undefined && { userLastName: payload.lastName }),
+            ...(payload.firstName !== undefined && {
+              userFirstName: payload.firstName,
+              firstName: payload.firstName,
+            }),
+            ...(payload.lastName !== undefined && {
+              userLastName: payload.lastName,
+              lastName: payload.lastName,
+            }),
             ...(payload.profilePictureURL !== undefined && {
               profileImageURL: payload.profilePictureURL,
               profilePictureURL: payload.profilePictureURL,
             }),
           };
+
+          try {
+            const rawStored = localStorage.getItem("ennvision-admin:token");
+            if (rawStored) {
+              const parsed = JSON.parse(rawStored);
+              parsed.userDetails = draft.data.userDetails;
+              localStorage.setItem("ennvision-admin:token", JSON.stringify(parsed));
+            }
+            if (payload.profilePictureURL) {
+              localStorage.setItem("user_profile_picture", payload.profilePictureURL);
+            }
+          } catch (e) {
+            // quiet storage catch
+          }
         }
       });
     },
