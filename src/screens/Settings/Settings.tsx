@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Container, Row, Col, Card, Form, Table, Spinner } from "react-bootstrap";
+import { Row, Col, Card, Form, Table, Spinner } from "react-bootstrap";
 import { useSearchParams } from "react-router-dom";
 import styled from "styled-components";
 import { toast } from "react-toastify";
@@ -42,7 +42,7 @@ const MARTIAL_AVATARS = [
   "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&auto=format&fit=crop&q=80",
 ];
 
-const Settings = () => {
+const Settings: React.FC = () => {
   const dispatch = useDispatch();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [searchParams, setSearchParams] = useSearchParams();
@@ -213,12 +213,11 @@ const Settings = () => {
     try {
       setUpdatingPassword(true);
       const res = await axios.post(`${base_url}${change_password_url}`, {
-        userId: user?.id || 1,
-        currentPassword: currentPassword,
-        newPassword: newPassword,
+        old_password: currentPassword,
+        new_password: newPassword,
       });
       if (res.data?.responseCode === 200 || res.status === 200) {
-        toast.success("Password updated successfully!");
+        toast.success("Password changed successfully!");
         setCurrentPassword("");
         setNewPassword("");
         setConfirmPassword("");
@@ -429,22 +428,13 @@ const Settings = () => {
                         />
                       </Form.Group>
                     </Col>
-                    <Col md={12}>
-                      <Form.Group>
-                        <Form.Label className="form-lbl">Profile Avatar URL</Form.Label>
-                        <Form.Control
-                          placeholder="https://example.com/avatar.jpg"
-                          value={profilePictureURL}
-                          onChange={(e) => setProfilePictureURL(e.target.value)}
-                        />
-                      </Form.Group>
-                    </Col>
                   </Row>
 
-                  <div className="mt-4">
+                  <div className="mt-4 pt-3 border-top d-flex justify-content-end">
                     <CustomButton
-                      title={savingProfile ? "Saving..." : "Save Profile Changes"}
+                      title={savingProfile ? "Saving Profile..." : "Save Profile Changes"}
                       type="submit"
+                      disabled={savingProfile}
                       bgcolor={primaryColor}
                       color={whiteColor}
                       padding="10px 24px"
@@ -457,63 +447,57 @@ const Settings = () => {
 
               {activeTab === "sub-account" && (
                 <div>
-                  <h3 className="section-title">Sub Account Profiles</h3>
-                  <p className="section-desc">Manage family members, junior practitioners, and delegated trainers.</p>
+                  <div className="d-flex justify-content-between align-items-center mb-3">
+                    <div>
+                      <h3 className="section-title">Family & Sub-Accounts</h3>
+                      <p className="section-desc">Manage family member profiles connected to your martial arts master account.</p>
+                    </div>
+                  </div>
 
-                  <h5 className="fw-bold mt-4 mb-3">Add New Family / Child Member</h5>
-                  <Form onSubmit={handleAddSubAccount}>
-                    <Row className="g-3">
-                      <Col md={6}>
-                        <Form.Group>
-                          <Form.Label className="form-lbl">First Name</Form.Label>
+                  {/* Add Sub Account Form */}
+                  <div className="p-3 bg-light rounded-3 mb-4 border">
+                    <h5 className="fw-bold text-dark mb-3">+ Register New Practitioner Profile</h5>
+                    <Form onSubmit={handleAddSubAccount}>
+                      <Row className="g-2 mb-2">
+                        <Col md={4}>
                           <Form.Control
-                            placeholder="e.g. Leo"
+                            placeholder="First Name"
                             value={newSubFirstName}
                             onChange={(e) => setNewSubFirstName(e.target.value)}
                             required
                           />
-                        </Form.Group>
-                      </Col>
-                      <Col md={6}>
-                        <Form.Group>
-                          <Form.Label className="form-lbl">Last Name</Form.Label>
+                        </Col>
+                        <Col md={4}>
                           <Form.Control
-                            placeholder="e.g. Silva"
+                            placeholder="Last Name"
                             value={newSubLastName}
                             onChange={(e) => setNewSubLastName(e.target.value)}
                           />
-                        </Form.Group>
-                      </Col>
-                      <Col md={4}>
-                        <Form.Group>
-                          <Form.Label className="form-lbl">Relationship</Form.Label>
+                        </Col>
+                        <Col md={4}>
                           <Form.Select
                             value={newSubRelationship}
                             onChange={(e) => setNewSubRelationship(e.target.value)}
                           >
                             <option value="Child">Child</option>
                             <option value="Spouse">Spouse</option>
+                            <option value="Sibling">Sibling</option>
                             <option value="Dependent">Dependent</option>
                           </Form.Select>
-                        </Form.Group>
-                      </Col>
-                      <Col md={4}>
-                        <Form.Group>
-                          <Form.Label className="form-lbl">Discipline</Form.Label>
+                        </Col>
+                        <Col md={6}>
                           <Form.Select
                             value={newSubDiscipline}
                             onChange={(e) => setNewSubDiscipline(e.target.value)}
                           >
-                            <option value="Karate">Shotokan Karate</option>
-                            <option value="BJJ">Brazilian Jiu-Jitsu</option>
-                            <option value="Taekwondo">Olympic Taekwondo</option>
+                            <option value="Brazilian Jiu-Jitsu">Brazilian Jiu-Jitsu (BJJ)</option>
+                            <option value="Karate">Karate</option>
+                            <option value="Taekwondo">Taekwondo</option>
+                            <option value="Muay Thai">Muay Thai</option>
                             <option value="Boxing">Boxing</option>
                           </Form.Select>
-                        </Form.Group>
-                      </Col>
-                      <Col md={4}>
-                        <Form.Group>
-                          <Form.Label className="form-lbl">Current Belt Rank</Form.Label>
+                        </Col>
+                        <Col md={6}>
                           <Form.Select
                             value={newSubBelt}
                             onChange={(e) => setNewSubBelt(e.target.value)}
@@ -523,53 +507,49 @@ const Settings = () => {
                             <option value="Orange Belt">Orange Belt</option>
                             <option value="Green Belt">Green Belt</option>
                             <option value="Blue Belt">Blue Belt</option>
+                            <option value="Purple Belt">Purple Belt</option>
+                            <option value="Brown Belt">Brown Belt</option>
+                            <option value="Black Belt">Black Belt</option>
                           </Form.Select>
-                        </Form.Group>
-                      </Col>
-                    </Row>
-                    <div className="mt-3">
-                      <CustomButton
-                        title="+ Add Sub-Account"
-                        type="submit"
-                        bgcolor={primaryColor}
-                        color={whiteColor}
-                        padding="8px 20px"
-                        fontSize="14px"
-                        fontFamily={fontFamilyBold}
-                      />
-                    </div>
-                  </Form>
+                        </Col>
+                      </Row>
+                      <div className="d-flex justify-content-end mt-3">
+                        <button type="submit" className="btn btn-primary btn-sm px-3">
+                          + Add Sub Account
+                        </button>
+                      </div>
+                    </Form>
+                  </div>
 
-                  <hr className="my-4" />
-
-                  <h5 className="fw-bold mb-3">Linked Family Profiles ({subAccounts.length})</h5>
                   {loadingSubs ? (
-                    <Spinner animation="border" size="sm" />
+                    <div className="text-center py-4">
+                      <Spinner animation="border" size="sm" variant="primary" />
+                    </div>
                   ) : subAccounts.length === 0 ? (
                     <p className="text-muted small">No sub-accounts registered yet.</p>
                   ) : (
-                    <div className="table-responsive">
-                      <Table hover className="align-middle">
-                        <thead>
-                          <tr>
-                            <th>Name</th>
-                            <th>Relationship</th>
-                            <th>Discipline</th>
-                            <th>Rank</th>
+                    <Table responsive hover className="align-middle">
+                      <thead>
+                        <tr>
+                          <th>Practitioner</th>
+                          <th>Relationship</th>
+                          <th>Discipline</th>
+                          <th>Belt Rank</th>
+                          <th>Status</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {subAccounts.map((item) => (
+                          <tr key={item.id}>
+                            <td className="fw-bold">{item.firstName} {item.lastName}</td>
+                            <td><span className="badge bg-secondary">{item.relationship}</span></td>
+                            <td>{item.discipline}</td>
+                            <td><span className="badge bg-info text-dark">{item.beltRank}</span></td>
+                            <td><span className="badge bg-success">Active</span></td>
                           </tr>
-                        </thead>
-                        <tbody>
-                          {subAccounts.map((s) => (
-                            <tr key={s.id}>
-                              <td className="fw-bold text-dark">{s.firstName} {s.lastName}</td>
-                              <td><span className="badge bg-light text-dark border">{s.relationship}</span></td>
-                              <td>{s.discipline}</td>
-                              <td>🥋 {s.beltRank}</td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </Table>
-                    </div>
+                        ))}
+                      </tbody>
+                    </Table>
                   )}
                 </div>
               )}
@@ -577,45 +557,49 @@ const Settings = () => {
               {activeTab === "change-password" && (
                 <Form onSubmit={handlePasswordSubmit}>
                   <h3 className="section-title">Change Password</h3>
-                  <p className="section-desc">Keep your Dojo account secure with a strong password.</p>
+                  <p className="section-desc">Update your login security credentials.</p>
 
-                  <div className="mt-3" style={{ maxWidth: 500 }}>
-                    <Form.Group className="mb-3">
-                      <Form.Label className="form-lbl">Current Password</Form.Label>
-                      <Form.Control
-                        type="password"
-                        placeholder="Enter current password"
-                        value={currentPassword}
-                        onChange={(e) => setCurrentPassword(e.target.value)}
-                        required
-                      />
-                    </Form.Group>
+                  <Row className="g-3" style={{ maxWidth: 500 }}>
+                    <Col md={12}>
+                      <Form.Group>
+                        <Form.Label className="form-lbl">Current Password</Form.Label>
+                        <Form.Control
+                          type="password"
+                          value={currentPassword}
+                          onChange={(e) => setCurrentPassword(e.target.value)}
+                          required
+                        />
+                      </Form.Group>
+                    </Col>
+                    <Col md={12}>
+                      <Form.Group>
+                        <Form.Label className="form-lbl">New Password</Form.Label>
+                        <Form.Control
+                          type="password"
+                          value={newPassword}
+                          onChange={(e) => setNewPassword(e.target.value)}
+                          required
+                        />
+                      </Form.Group>
+                    </Col>
+                    <Col md={12}>
+                      <Form.Group>
+                        <Form.Label className="form-lbl">Confirm New Password</Form.Label>
+                        <Form.Control
+                          type="password"
+                          value={confirmPassword}
+                          onChange={(e) => setConfirmPassword(e.target.value)}
+                          required
+                        />
+                      </Form.Group>
+                    </Col>
+                  </Row>
 
-                    <Form.Group className="mb-3">
-                      <Form.Label className="form-lbl">New Password</Form.Label>
-                      <Form.Control
-                        type="password"
-                        placeholder="Enter new password"
-                        value={newPassword}
-                        onChange={(e) => setNewPassword(e.target.value)}
-                        required
-                      />
-                    </Form.Group>
-
-                    <Form.Group className="mb-4">
-                      <Form.Label className="form-lbl">Confirm New Password</Form.Label>
-                      <Form.Control
-                        type="password"
-                        placeholder="Re-enter new password"
-                        value={confirmPassword}
-                        onChange={(e) => setConfirmPassword(e.target.value)}
-                        required
-                      />
-                    </Form.Group>
-
+                  <div className="mt-4 pt-3 border-top d-flex justify-content-start">
                     <CustomButton
                       title={updatingPassword ? "Updating..." : "Update Password"}
                       type="submit"
+                      disabled={updatingPassword}
                       bgcolor={primaryColor}
                       color={whiteColor}
                       padding="10px 24px"
@@ -628,40 +612,15 @@ const Settings = () => {
 
               {activeTab === "enrolled-school" && (
                 <div>
-                  <h3 className="section-title">Enrolled Martial Arts School</h3>
-                  <p className="section-desc">Details of your active Dojo affiliation, coaches, and grading register.</p>
+                  <h3 className="section-title">Enrolled Dojo Facility</h3>
+                  <p className="section-desc">Your primary training academy and home martial arts school.</p>
 
-                  <div className="school-box p-4 mt-3 rounded-3 border">
-                    <div className="d-flex align-items-center gap-3">
-                      <div className="school-avatar">🥋</div>
-                      <div>
-                        <h4 className="mb-1 text-dark fw-bold">Dragon Warrior Martial Arts Academy</h4>
-                        <p className="text-muted mb-0">Main Headquarters Dojo • Branch ID #001</p>
-                      </div>
-                    </div>
-                    <hr />
-                    <div className="row g-3 text-muted small">
-                      <div className="col-sm-6">📍 <strong>Address:</strong> 104 Martial Arts Blvd, Los Angeles, CA</div>
-                      <div className="col-sm-6">📞 <strong>Contact:</strong> +1 (415) 555-1234</div>
-                      <div className="col-sm-6">🥋 <strong>Disciplines:</strong> Karate, BJJ, Muay Thai, Taekwondo</div>
-                      <div className="col-sm-6">⭐ <strong>Status:</strong> Active Enrolled Student</div>
-                    </div>
-
-                    <div className="d-flex gap-2 mt-4">
-                      <a
-                        href="https://maps.google.com/?q=Los+Angeles+CA"
-                        target="_blank"
-                        rel="noreferrer"
-                        className="btn btn-outline-primary btn-sm px-3"
-                      >
-                        📍 Get Directions
-                      </a>
-                      <a
-                        href="tel:+14155551234"
-                        className="btn btn-outline-secondary btn-sm px-3"
-                      >
-                        📞 Call Dojo
-                      </a>
+                  <div className="school-box p-4 rounded-3 border bg-light d-flex align-items-center gap-3">
+                    <div className="school-avatar">🥋</div>
+                    <div>
+                      <h4 className="fw-bold text-dark mb-1">Dragon Warrior Martial Arts HQ</h4>
+                      <p className="text-muted small mb-1">📍 100 Martial Way, Los Angeles, CA • Sensei Rodrigo Silva</p>
+                      <span className="badge bg-success">Enrolled Active Student</span>
                     </div>
                   </div>
                 </div>
@@ -669,21 +628,22 @@ const Settings = () => {
 
               {activeTab === "delete-account" && (
                 <div>
-                  <h3 className="section-title text-danger">⚠️ Danger Zone: Delete Account</h3>
-                  <p className="section-desc">Once deleted, all your belt history, booking credits, and payments will be removed.</p>
+                  <h3 className="section-title text-danger">⚠️ Delete Account</h3>
+                  <p className="section-desc">Permanently remove your Dojo student account, booking records, and belt history.</p>
 
-                  <div className="p-3 bg-light rounded-3 border border-danger-subtle mt-3">
-                    <p className="mb-3 text-dark small">
-                      Please confirm that you want to permanently close your martial arts student / teacher account.
+                  <div className="p-3 bg-danger-subtle rounded-3 border border-danger-subtle mb-3">
+                    <p className="text-danger small mb-0 fw-bold">
+                      Warning: Once deleted, your account cannot be recovered. All exam history will be erased.
                     </p>
-                    <button
-                      type="button"
-                      className="btn btn-danger btn-sm px-3"
-                      onClick={handleDeleteAccount}
-                    >
-                      Permanently Delete My Account
-                    </button>
                   </div>
+
+                  <button
+                    type="button"
+                    className="btn btn-danger btn-sm"
+                    onClick={handleDeleteAccount}
+                  >
+                    Permanently Delete Account
+                  </button>
                 </div>
               )}
             </Card>
@@ -697,17 +657,18 @@ const Settings = () => {
 export default Settings;
 
 const SettingsStyled = styled.div`
+  background: transparent;
   min-height: 80vh;
-  background: #f8fafc;
 
   .page-title {
-    font-size: 28px;
+    font-size: 24px;
     font-family: ${fontFamilyBold};
-    color: #1e293b;
+    color: #0f172a;
+    margin-bottom: 4px;
   }
 
   .page-subtitle {
-    font-size: 15px;
+    font-size: 14px;
     color: #64748b;
   }
 
