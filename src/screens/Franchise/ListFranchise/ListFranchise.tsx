@@ -31,8 +31,8 @@ const ListFranchise: React.FC = () => {
     (state: RootState) => state.branchData
   );
 
-  const { businessTypes } = useSelector(
-    (state: RootState) => state.appData.data.statusData
+  const businessTypes = useSelector(
+    (state: RootState) => state.appData?.data?.statusData?.businessTypes || []
   );
   const columns: ColumnsType<BranchDataType> = [
     {

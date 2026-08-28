@@ -33,9 +33,17 @@ import PlacesAutoCompleteInput from "../../../maps/PlacesAutocomplete";
 
 const EditBranch = () => {
   const { getLabelByKey } = useScreenTranslation("schoolCreate");
+  const appData = useSelector((state: RootState) => state.appData?.data);
+  const statusData = appData?.statusData || {
+    activities: [],
+    facilities: [],
+    businessTypes: [],
+  };
   const {
-    statusData: { activities, facilities, businessTypes },
-  } = useSelector((state: RootState) => state.appData.data);
+    activities = [],
+    facilities = [],
+    businessTypes = [],
+  } = statusData;
 
   const { loading, handleSubmit } = useBranch();
   const { branchId } = useParams();

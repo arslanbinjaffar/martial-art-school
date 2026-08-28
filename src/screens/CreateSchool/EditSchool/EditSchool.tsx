@@ -32,9 +32,21 @@ import PlacesAutoCompleteInput from "../../../maps/PlacesAutocomplete";
 
 const EditSchool = () => {
   const { getLabelByKey } = useScreenTranslation("schoolCreate");
+  const appData = useSelector((state: RootState) => state.appData?.data);
+  const statusData = appData?.statusData || {
+    activities: [],
+    facilities: [],
+    currency: [],
+    language: [],
+    businessTypes: [],
+  };
   const {
-    statusData: { activities, facilities, currency, language, businessTypes },
-  } = useSelector((state: RootState) => state.appData.data);
+    activities = [],
+    facilities = [],
+    currency = [],
+    language = [],
+    businessTypes = [],
+  } = statusData;
   const { schoolData } = useSelector((state: RootState) => state.dashboardData);
   const { handleSubmit, loading } = useCreateSchool();
   const { schoolId } = useParams();

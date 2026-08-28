@@ -38,9 +38,17 @@ import useBranch from "../hooks/useFranchise";
 
 const EditFranchise = () => {
   const { getLabelByKey } = useScreenTranslation("franchiseUpdate");
+  const appData = useSelector((state: RootState) => state.appData?.data);
+  const statusData = appData?.statusData || {
+    activities: [],
+    facilities: [],
+    businessTypes: [],
+  };
   const {
-    statusData: { activities, facilities, businessTypes },
-  } = useSelector((state: RootState) => state.appData.data);
+    activities = [],
+    facilities = [],
+    businessTypes = [],
+  } = statusData;
   const { data: branchData } = useSelector(
     (state: RootState) => state.branchData.branchData
   );

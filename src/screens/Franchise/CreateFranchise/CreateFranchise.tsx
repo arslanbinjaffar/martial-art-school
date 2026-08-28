@@ -34,9 +34,17 @@ import useBranch from "../hooks/useFranchise";
 
 const CreateFranchise = () => {
   const { getLabelByKey } = useScreenTranslation("franchiseCreate");
+  const appData = useSelector((state: RootState) => state.appData?.data);
+  const statusData = appData?.statusData || {
+    activities: [],
+    facilities: [],
+    businessTypes: [],
+  };
   const {
-    statusData: { activities, facilities, businessTypes },
-  } = useSelector((state: RootState) => state.appData.data);
+    activities = [],
+    facilities = [],
+    businessTypes = [],
+  } = statusData;
   const { loading, handleSubmit } = useBranch();
   const initialValues: CreateFranchiseInitialValues = {
     franchiseName: "",
