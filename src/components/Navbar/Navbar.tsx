@@ -90,6 +90,17 @@ function Navbar() {
     }
   };
 
+  let storedUser: any = null;
+  try {
+    const raw = localStorage.getItem("ennvision-admin:token");
+    if (raw) storedUser = JSON.parse(raw)?.userDetails;
+  } catch (e) {}
+
+  const currentFirst = (user as any)?.userFirstName || (user as any)?.firstName || storedUser?.userFirstName || storedUser?.firstName || "Sensei";
+  const currentLast = (user as any)?.userLastName || (user as any)?.lastName || storedUser?.userLastName || storedUser?.lastName || "Master";
+  const currentEmail = (user as any)?.email || (user as any)?.emailAddress || storedUser?.email || storedUser?.emailAddress || "user@martialarts.com";
+  const currentPhoto = user?.profileImageURL || (user as any)?.profilePictureURL || storedUser?.profileImageURL || localStorage.getItem("user_profile_picture") || profileIcon;
+
   // Language Menu
   const languageItems: MenuProps["items"] = [
     {
@@ -139,14 +150,15 @@ function Navbar() {
     {
       key: "header",
       label: (
-        <div className="d-flex justify-content-between align-items-center py-1">
+        <div className="d-flex justify-content-between align-items-center py-1" style={{ minWidth: 260 }}>
           <strong className="text-dark">Notifications</strong>
           <span
             className="text-primary small cursor-pointer"
+            style={{ cursor: "pointer" }}
             onClick={(e) => {
               e.stopPropagation();
               setNotificationCount(0);
-              toast.info("All notifications marked as read");
+              toast.success("All notifications marked as read!");
             }}
           >
             Mark all read
@@ -157,33 +169,36 @@ function Navbar() {
     { type: "divider" },
     {
       key: "notif-1",
-      icon: <CheckCircleOutlined style={{ color: "#10b981" }} />,
+      icon: <CheckCircleOutlined style={{ color: "#10b981", fontSize: 16 }} />,
       label: (
-        <div>
-          <div className="fw-bold text-dark">Belt Promotion Ready!</div>
-          <small className="text-muted">You are eligible for the next BJJ Stripe assessment.</small>
+        <div style={{ maxWidth: 260 }}>
+          <div className="fw-bold text-dark">🥋 Belt Assessment Eligible!</div>
+          <div className="text-muted small">You completed 18 classes. Register for the upcoming stripe exam.</div>
+          <span className="text-muted" style={{ fontSize: 10 }}>10 mins ago</span>
         </div>
       ),
       onClick: () => navigate("/booking"),
     },
     {
       key: "notif-2",
-      icon: <BellOutlined style={{ color: "#3b82f6" }} />,
+      icon: <BellOutlined style={{ color: "#3b82f6", fontSize: 16 }} />,
       label: (
-        <div>
-          <div className="fw-bold text-dark">Class Reminder: Muay Thai</div>
-          <small className="text-muted">Your class starts today at 05:30 PM (Mat A).</small>
+        <div style={{ maxWidth: 260 }}>
+          <div className="fw-bold text-dark">⏰ Live Masterclass Starting</div>
+          <div className="text-muted small">BJJ Guard Retention Masterclass with Master Rodrigo starts soon.</div>
+          <span className="text-muted" style={{ fontSize: 10 }}>1 hour ago</span>
         </div>
       ),
-      onClick: () => navigate("/classes"),
+      onClick: () => navigate("/booking?tab=webinars"),
     },
     {
       key: "notif-3",
-      icon: <CreditCardOutlined style={{ color: "#f59e0b" }} />,
+      icon: <CreditCardOutlined style={{ color: "#f59e0b", fontSize: 16 }} />,
       label: (
-        <div>
-          <div className="fw-bold text-dark">Monthly Dojo Pass Active</div>
-          <small className="text-muted">Payment processed successfully.</small>
+        <div style={{ maxWidth: 260 }}>
+          <div className="fw-bold text-dark">💳 Monthly Pass Renewed</div>
+          <div className="text-muted small">Dojo membership active. Receipt generated in wallet.</div>
+          <span className="text-muted" style={{ fontSize: 10 }}>Yesterday</span>
         </div>
       ),
       onClick: () => navigate("/payment"),
@@ -196,16 +211,12 @@ function Navbar() {
       key: "profile-header",
       onClick: () => navigate("/setting?tab=profile"),
       label: (
-        <div className="py-1" style={{ cursor: "pointer" }}>
+        <div className="py-1" style={{ cursor: "pointer", minWidth: 200 }}>
           <div className="fw-bold text-dark">
-            {(user as any)?.userFirstName
-              ? `${(user as any).userFirstName} ${(user as any).userLastName || ""}`
-              : (user as any)?.firstName
-              ? `${(user as any).firstName} ${(user as any).lastName || ""}`
-              : "Martial Arts Master"}
+            {currentFirst} {currentLast}
           </div>
           <small className="text-muted">
-            {(user as any)?.email || (user as any)?.emailAddress || "user@martialarts.com"}
+            {currentEmail}
           </small>
         </div>
       ),
@@ -359,7 +370,7 @@ function Navbar() {
                 <Badge dot color="green">
                   <Avatar
                     size={44}
-                    src={user?.profileImageURL || (user as any)?.profilePictureURL || localStorage.getItem("user_profile_picture") || profileIcon}
+                    src={currentPhoto}
                     shape="square"
                     style={{ borderRadius: "12px", objectFit: "cover" }}
                   />

@@ -350,3 +350,55 @@ button {
     height: 150px !important;
   }
 }
+
+/* ==========================================================================
+   Ant Design Modal & Popover Solid Background & Depth Overrides
+   ========================================================================== */
+.ant-modal-content {
+  background-color: #ffffff !important;
+  border-radius: 16px !important;
+  box-shadow: 0 20px 45px rgba(15, 23, 42, 0.22) !important;
+  padding: 24px !important;
+  border: 1px solid #e2e8f0 !important;
+}
+
+.ant-modal-header {
+  background-color: #ffffff !important;
+  border-bottom: 1px solid #f1f5f9 !important;
+  padding-bottom: 14px !important;
+  margin-bottom: 16px !important;
+}
+
+.ant-modal-title {
+  color: #0f172a !important;
+  font-family: "EnnVisionsBold", sans-serif !important;
+  font-size: 18px !important;
+}
+
+.ant-modal-mask {
+  background-color: rgba(15, 23, 42, 0.65) !important;
+  backdrop-filter: blur(5px) !important;
+}
+
+.ant-popover-inner {
+  background-color: #ffffff !important;
+  border-radius: 14px !important;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12) !important;
+  border: 1px solid #e2e8f0 !important;
+  padding: 12px !important;
+}
+
+.ant-popover-title {
+  border-bottom: 1px solid #f1f5f9 !important;
+  padding-bottom: 8px !important;
+  margin-bottom: 8px !important;
+}
+
+.ant-dropdown-menu {
+  background-color: #ffffff !important;
+  border-radius: 12px !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1) !important;
+  border: 1px solid #f1f5f9 !important;
+  padding: 8px !important;
+}
+
