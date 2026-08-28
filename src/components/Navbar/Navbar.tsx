@@ -1,5 +1,5 @@
 import { useMemo, useRef, useState, useEffect } from "react";
-import { Avatar, Badge, Button, Drawer, Dropdown, Input, InputRef, MenuProps, Modal } from "antd";
+import { Avatar, Badge, Button, Drawer, Dropdown, Input, InputRef, MenuProps, Modal, Popover } from "antd";
 import {
   MenuOutlined,
   UserOutlined,
@@ -11,6 +11,7 @@ import {
   CreditCardOutlined,
   SearchOutlined,
   CloudOutlined,
+  EnvironmentOutlined,
 } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
@@ -50,9 +51,6 @@ function Navbar() {
   const [searchResults, setSearchResults] = useState<any>(null);
   const [showSearchModal, setShowSearchModal] = useState<boolean>(false);
   const [searching, setSearching] = useState<boolean>(false);
-
-  // Weather Modal State
-  const [showWeatherModal, setShowWeatherModal] = useState<boolean>(false);
 
   const currentDateFormatted = useMemo(() => {
     const d = new Date();
@@ -246,6 +244,42 @@ function Navbar() {
     },
   ];
 
+  // Weather & Training Conditions Popover Content
+  const weatherPopoverContent = (
+    <div style={{ width: 280, padding: "6px 2px" }}>
+      <div className="d-flex align-items-center gap-3 mb-3 pb-2 border-bottom">
+        <span style={{ fontSize: "32px" }}>🌤️</span>
+        <div>
+          <strong className="text-dark d-block" style={{ fontSize: "15px" }}>
+            Los Angeles, CA • 72°F
+          </strong>
+          <span className="text-success small fw-bold">✓ Optimal Training Conditions</span>
+        </div>
+      </div>
+
+      <div className="d-flex flex-column gap-2" style={{ fontSize: "13px" }}>
+        <div className="d-flex justify-content-between align-items-center">
+          <span className="text-muted">🥋 Tatami Status:</span>
+          <span className="badge bg-success-subtle text-success border border-success-subtle">
+            Sanitized & Open
+          </span>
+        </div>
+        <div className="d-flex justify-content-between align-items-center">
+          <span className="text-muted">🌡️ Climate Control:</span>
+          <strong className="text-dark">Active AC (68°F)</strong>
+        </div>
+        <div className="d-flex justify-content-between align-items-center">
+          <span className="text-muted">💧 Hydration:</span>
+          <strong className="text-dark">Fully Stocked</strong>
+        </div>
+        <div className="d-flex justify-content-between align-items-center">
+          <span className="text-muted">⏰ Peak Mat Hours:</span>
+          <strong className="text-primary">05:00 - 08:30 PM</strong>
+        </div>
+      </div>
+    </div>
+  );
+
   return (
     <>
       <NavbarStyle>
@@ -281,15 +315,21 @@ function Navbar() {
           </div>
 
           <div className="right-bar d-flex gap-3 align-items-center">
-            {/* Weather / Dojo Status Widget */}
-            <div
-              className="date-time-area px-3 d-flex align-items-center gap-2 cursor-pointer"
-              style={{ cursor: "pointer" }}
-              onClick={() => setShowWeatherModal(true)}
+            {/* Weather / Dojo Status Popover */}
+            <Popover
+              content={weatherPopoverContent}
+              title={<strong className="text-dark">🌤️ Today's Dojo Conditions</strong>}
+              trigger="click"
+              placement="bottomRight"
             >
-              <img src={cloudIcon} alt="" />
-              <span className="date">{currentDateFormatted}</span>
-            </div>
+              <div
+                className="date-time-area px-3 d-flex align-items-center gap-2"
+                style={{ cursor: "pointer" }}
+              >
+                <img src={cloudIcon} alt="" />
+                <span className="date">{currentDateFormatted}</span>
+              </div>
+            </Popover>
 
             {/* Notifications Dropdown */}
             <Dropdown menu={{ items: notificationItems }} trigger={["click"]} placement="bottomRight">
@@ -375,6 +415,7 @@ function Navbar() {
           centered
           zIndex={9999}
           getContainer={() => document.body}
+          bodyStyle={{ background: "#ffffff", padding: "16px" }}
         >
           <div className="py-2">
             {searching ? (
@@ -453,30 +494,6 @@ function Navbar() {
             ) : (
               <p className="text-muted text-center py-4">No matching results found.</p>
             )}
-          </div>
-        </Modal>
-
-        {/* Dojo Weather & Training Conditions Modal */}
-        <Modal
-          title="🌤️ Today's Dojo Training Conditions"
-          open={showWeatherModal}
-          onOk={() => setShowWeatherModal(false)}
-          onCancel={() => setShowWeatherModal(false)}
-          footer={null}
-          centered
-          zIndex={9999}
-          getContainer={() => document.body}
-        >
-          <div className="p-3 text-center">
-            <div style={{ fontSize: "52px" }}>🥋 ☀️</div>
-            <h4 className="fw-bold mt-2 text-dark">72°F • Optimal Training Conditions</h4>
-            <p className="text-muted mb-3">Main Dojo Air Conditioning: Active (68°F)</p>
-            <div className="row g-2 text-start p-3 bg-light rounded-3 border">
-              <div className="col-6">📍 <strong className="text-dark">Location:</strong> Los Angeles, CA</div>
-              <div className="col-6">🥋 <strong className="text-dark">Tatami Status:</strong> Sanitized & Open</div>
-              <div className="col-6">⏰ <strong className="text-dark">Peak Mat Hours:</strong> 05:00 PM - 08:30 PM</div>
-              <div className="col-6">💧 <strong className="text-dark">Hydration Station:</strong> Fully Stocked</div>
-            </div>
           </div>
         </Modal>
       </NavbarStyle>
