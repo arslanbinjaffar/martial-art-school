@@ -129,12 +129,8 @@ const Booking: React.FC = () => {
       });
       if (res.data?.responseCode === 200 || res.status === 200) {
         toast.success(`Registered for "${wbn.title}"! Payment receipt logged in Wallet.`);
-        // open join link or alert
-        setTimeout(() => {
-          if (window.confirm(`Registration confirmed! Would you like to open the live webinar room now?\n\nJoin URL: ${wbn.joinUrl}`)) {
-            window.open(wbn.joinUrl, "_blank");
-          }
-        }, 300);
+        const targetRoomId = (wbn as any).roomId || "live-bjj-masterclass-904";
+        navigate(`/webinar/live/${targetRoomId}`);
       }
     } catch (err: any) {
       toast.error("Registration failed. Please verify your payment card in Wallet.");
