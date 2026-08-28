@@ -2,6 +2,7 @@ import styled from "styled-components";
 import { darkBlue, mediaDeviceMax } from "../../components/GlobalStyle";
 
 export const CreateSchoolStyled = styled.div`
+ width:100%;
   h3 {
     color: ${darkBlue};
     font-size: 18px;
