@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { Container, Row, Col, Card, Table, Badge } from "react-bootstrap";
+import { Container, Card, Table, Spinner } from "react-bootstrap";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { toast } from "react-toastify";
+import axios from "axios";
 import Head from "../../components/Head/Head";
 import CustomButton from "../../components/CustomButton/CustomButton";
 import {
@@ -13,6 +14,18 @@ import {
   pureDark,
   whiteColor,
 } from "../../components/GlobalStyle";
+import { base_url, classes_my_bookings_url, classes_cancel_booking_url } from "../../utils/api_urls";
+
+export type BookingItem = {
+  id: string;
+  classId: number;
+  classTitle: string;
+  instructor: string;
+  dateTime: string;
+  location: string;
+  status: string;
+  beltLevel: string;
+};
 
 const Booking = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -20,6 +33,29 @@ const Booking = () => {
   const currentTab = searchParams.get("tab") || "current";
 
   const [activeTab, setActiveTab] = useState<string>(currentTab);
+  const [upcomingBookings, setUpcomingBookings] = useState<BookingItem[]>([]);
+  const [previousBookings, setPreviousBookings] = useState<BookingItem[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+
+  const fetchBookings = async () => {
+    try {
+      setLoading(true);
+      const res = await axios.get(`${base_url}${classes_my_bookings_url}`);
+      const data = res.data?.data || res.data?.results;
+      if (data) {
+        setUpcomingBookings(data.upcoming || []);
+        setPreviousBookings(data.previous || []);
+      }
+    } catch (err) {
+      toast.error("Failed to load your Dojo bookings");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchBookings();
+  }, []);
 
   useEffect(() => {
     const tab = searchParams.get("tab");
@@ -33,71 +69,23 @@ const Booking = () => {
     setSearchParams({ tab });
   };
 
-  const currentBookings = [
-    {
-      id: "BK-8021",
-      classTitle: "Brazilian Jiu-Jitsu (BJJ) - Advanced Gi",
-      instructor: "Master Rodrigo Silva",
-      dateTime: "Today @ 05:30 PM",
-      location: "Main Dojo - Mat A",
-      status: "CONFIRMED",
-      beltLevel: "Blue & Above",
-    },
-    {
-      id: "BK-8024",
-      classTitle: "Muay Thai Heavy Bag Conditioning",
-      instructor: "Kru Somchai Thong",
-      dateTime: "Tomorrow @ 09:00 AM",
-      location: "Striking Cage 2",
-      status: "CONFIRMED",
-      beltLevel: "All Levels",
-    },
-    {
-      id: "BK-8029",
-      classTitle: "Karate Kumite & Sparring Clinic",
-      instructor: "Sensei Takeshi Yamamoto",
-      dateTime: "Friday @ 06:00 PM",
-      location: "Tatami Ring 1",
-      status: "PENDING_CHECKIN",
-      beltLevel: "Green Belt+",
-    },
-  ];
-
-  const previousBookings = [
-    {
-      id: "BK-7910",
-      classTitle: "Olympic Taekwondo - High Kick Speed",
-      instructor: "Master Jin-Woo Park",
-      dateTime: "Aug 24, 2026 @ 06:15 PM",
-      location: "Agility Dojo",
-      status: "COMPLETED",
-      beltLevel: "All Levels",
-    },
-    {
-      id: "BK-7855",
-      classTitle: "BJJ Open Mat & Live Submission Sparring",
-      instructor: "Master Rodrigo Silva",
-      dateTime: "Aug 20, 2026 @ 07:00 PM",
-      location: "Main Dojo",
-      status: "COMPLETED",
-      beltLevel: "All Belts",
-    },
-    {
-      id: "BK-7702",
-      classTitle: "Boxing Footwork & Defense Fundamentals",
-      instructor: "Coach Marcus Evans",
-      dateTime: "Aug 15, 2026 @ 08:00 AM",
-      location: "Boxing Ring Zone",
-      status: "COMPLETED",
-      beltLevel: "Beginner",
-    },
-  ];
-
-  const handleCancel = (bookingId: string) => {
-    toast.info(`Booking ${bookingId} has been cancelled.`);
+  const handleCancel = async (bookingId: string) => {
+    if (window.confirm(`Are you sure you want to cancel booking ${bookingId}?`)) {
+      try {
+        const res = await axios.post(`${base_url}${classes_cancel_booking_url}`, {
+          booking_id: bookingId,
+        });
+        if (res.data?.responseCode === 200 || res.status === 200) {
+          toast.info(`Booking ${bookingId} has been cancelled.`);
+          fetchBookings();
+        }
+      } catch (err: any) {
+        toast.error("Failed to cancel booking.");
+      }
+    }
   };
 
-  const displayedBookings = activeTab === "current" ? currentBookings : previousBookings;
+  const displayedBookings = activeTab === "current" ? upcomingBookings : previousBookings;
 
   return (
     <BookingStyled>
@@ -130,7 +118,7 @@ const Booking = () => {
             className={`pill-btn ${activeTab === "current" ? "active" : ""}`}
             onClick={() => switchTab("current")}
           >
-            Upcoming / Current ({currentBookings.length})
+            Upcoming / Current ({upcomingBookings.length})
           </button>
           <button
             type="button"
@@ -141,69 +129,97 @@ const Booking = () => {
           </button>
         </div>
 
-        <Card className="booking-card">
-          <div className="table-responsive">
-            <Table hover className="align-middle mb-0 custom-table">
-              <thead>
-                <tr>
-                  <th>Booking ID</th>
-                  <th>Martial Arts Session</th>
-                  <th>Instructor</th>
-                  <th>Date & Time</th>
-                  <th>Location</th>
-                  <th>Status</th>
-                  <th className="text-end">Action</th>
-                </tr>
-              </thead>
-              <tbody>
-                {displayedBookings.map((bk) => (
-                  <tr key={bk.id}>
-                    <td className="fw-bold text-primary">{bk.id}</td>
-                    <td>
-                      <div className="fw-bold text-dark">{bk.classTitle}</div>
-                      <small className="text-muted">{bk.beltLevel}</small>
-                    </td>
-                    <td>🥋 {bk.instructor}</td>
-                    <td>{bk.dateTime}</td>
-                    <td>📍 {bk.location}</td>
-                    <td>
-                      <span
-                        className={`status-pill ${
-                          bk.status === "CONFIRMED"
-                            ? "confirmed"
-                            : bk.status === "COMPLETED"
-                            ? "completed"
-                            : "pending"
-                        }`}
-                      >
-                        {bk.status}
-                      </span>
-                    </td>
-                    <td className="text-end">
-                      {activeTab === "current" ? (
-                        <button
-                          type="button"
-                          className="btn-cancel"
-                          onClick={() => handleCancel(bk.id)}
-                        >
-                          Cancel
-                        </button>
-                      ) : (
-                        <button
-                          type="button"
-                          className="btn-rebook"
-                          onClick={() => navigate("/classes")}
-                        >
-                          Rebook
-                        </button>
-                      )}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </Table>
+        {loading ? (
+          <div className="text-center py-5">
+            <Spinner animation="border" variant="primary" />
+            <p className="text-muted mt-2">Loading your bookings...</p>
           </div>
-        </Card>
+        ) : (
+          <Card className="booking-card">
+            {displayedBookings.length === 0 ? (
+              <div className="text-center py-5">
+                <p className="text-muted mb-3">
+                  {activeTab === "current"
+                    ? "No upcoming class bookings found. Book your next dojo session!"
+                    : "No previous class records found."}
+                </p>
+                {activeTab === "current" && (
+                  <CustomButton
+                    title="Browse Schedule & Book"
+                    clicked={() => navigate("/classes")}
+                    bgcolor={primaryColor}
+                    color={whiteColor}
+                    padding="10px 24px"
+                    fontSize="14px"
+                    fontFamily={fontFamilyBold}
+                  />
+                )}
+              </div>
+            ) : (
+              <div className="table-responsive">
+                <Table hover className="align-middle mb-0 custom-table">
+                  <thead>
+                    <tr>
+                      <th>Booking ID</th>
+                      <th>Martial Arts Session</th>
+                      <th>Instructor</th>
+                      <th>Date & Time</th>
+                      <th>Location</th>
+                      <th>Status</th>
+                      <th className="text-end">Action</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {displayedBookings.map((bk) => (
+                      <tr key={bk.id}>
+                        <td className="fw-bold text-primary">{bk.id}</td>
+                        <td>
+                          <div className="fw-bold text-dark">{bk.classTitle}</div>
+                          <small className="text-muted">{bk.beltLevel}</small>
+                        </td>
+                        <td>🥋 {bk.instructor}</td>
+                        <td>{bk.dateTime}</td>
+                        <td>📍 {bk.location}</td>
+                        <td>
+                          <span
+                            className={`status-pill ${
+                              bk.status === "CONFIRMED"
+                                ? "confirmed"
+                                : bk.status === "COMPLETED"
+                                ? "completed"
+                                : "cancelled"
+                            }`}
+                          >
+                            {bk.status}
+                          </span>
+                        </td>
+                        <td className="text-end">
+                          {activeTab === "current" ? (
+                            <button
+                              type="button"
+                              className="btn-cancel"
+                              onClick={() => handleCancel(bk.id)}
+                            >
+                              Cancel
+                            </button>
+                          ) : (
+                            <button
+                              type="button"
+                              className="btn-rebook"
+                              onClick={() => navigate("/classes")}
+                            >
+                              Rebook
+                            </button>
+                          )}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </Table>
+              </div>
+            )}
+          </Card>
+        )}
       </Container>
     </BookingStyled>
   );
@@ -294,9 +310,9 @@ const BookingStyled = styled.div`
       color: #4338ca;
     }
 
-    &.pending {
-      background: #fef3c7;
-      color: #b45309;
+    &.cancelled {
+      background: #fee2e2;
+      color: #b91c1c;
     }
   }
 

@@ -1,5 +1,5 @@
-import { useMemo, useRef, useState } from "react";
-import { Avatar, Badge, Button, Drawer, Dropdown, Input, InputRef, MenuProps } from "antd";
+import { useMemo, useRef, useState, useEffect } from "react";
+import { Avatar, Badge, Button, Drawer, Dropdown, Input, InputRef, MenuProps, Modal } from "antd";
 import {
   MenuOutlined,
   UserOutlined,
@@ -9,17 +9,20 @@ import {
   GlobalOutlined,
   CheckCircleOutlined,
   CreditCardOutlined,
+  SearchOutlined,
+  CloudOutlined,
 } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
+import axios from "axios";
 
 import { useGlobalContext } from "../../context/context";
 import { RootState } from "../../redux/store";
 import { setLanguage } from "../../redux/features/selectedLanguageSlice";
 import { removeLoginData } from "../../redux/features/loginDataSlice";
 import { removeUserLogin } from "../../redux/features/admin/user/loginDataSlice";
-import { auth_token_key } from "../../utils/api_urls";
+import { auth_token_key, base_url, universal_search_url } from "../../utils/api_urls";
 
 import NavigationMenu from "../NavigationMenu/NavigationMenu";
 import NavbarStyle, { NavbarRow2Styled } from "./style";
@@ -43,6 +46,14 @@ function Navbar() {
 
   const [notificationCount, setNotificationCount] = useState(4);
 
+  // Search Results State
+  const [searchResults, setSearchResults] = useState<any>(null);
+  const [showSearchModal, setShowSearchModal] = useState<boolean>(false);
+  const [searching, setSearching] = useState<boolean>(false);
+
+  // Weather Modal State
+  const [showWeatherModal, setShowWeatherModal] = useState<boolean>(false);
+
   const currentDateFormatted = useMemo(() => {
     const d = new Date();
     return d.toLocaleDateString("en-US", {
@@ -58,6 +69,27 @@ function Navbar() {
     dispatch(removeLoginData());
     toast.success("Logged out successfully");
     navigate("/login");
+  };
+
+  const handleSearch = async (term: string) => {
+    setSearchText(term);
+    if (!term.trim()) {
+      setSearchResults(null);
+      return;
+    }
+    try {
+      setSearching(true);
+      const res = await axios.get(`${base_url}${universal_search_url}?q=${encodeURIComponent(term)}`);
+      const data = res.data?.data || res.data?.results;
+      if (data) {
+        setSearchResults(data);
+        setShowSearchModal(true);
+      }
+    } catch (err) {
+      // quiet search fallback
+    } finally {
+      setSearching(false);
+    }
   };
 
   // Language Menu
@@ -240,14 +272,20 @@ function Navbar() {
               ref={searchRef}
               value={searchText}
               placeholder="Search classes, techniques, dojos..."
-              onChange={(e) => setSearchText(e.target.value)}
-              suffix={<img src={searchIcon} alt="search-icon" />}
+              onChange={(e) => handleSearch(e.target.value)}
+              onPressEnter={() => setShowSearchModal(true)}
+              suffix={<img src={searchIcon} alt="search-icon" style={{ cursor: "pointer" }} onClick={() => setShowSearchModal(true)} />}
               className="custom-input"
             />
           </div>
 
           <div className="right-bar d-flex gap-3 align-items-center">
-            <div className="date-time-area px-3 d-flex align-items-center gap-2">
+            {/* Weather / Dojo Status Widget */}
+            <div
+              className="date-time-area px-3 d-flex align-items-center gap-2 cursor-pointer"
+              style={{ cursor: "pointer" }}
+              onClick={() => setShowWeatherModal(true)}
+            >
               <img src={cloudIcon} alt="" />
               <span className="date">{currentDateFormatted}</span>
             </div>
@@ -317,13 +355,125 @@ function Navbar() {
                 ref={searchRef}
                 value={searchText}
                 placeholder="Search ..."
-                onChange={(e) => setSearchText(e.target.value)}
+                onChange={(e) => handleSearch(e.target.value)}
+                onPressEnter={() => setShowSearchModal(true)}
                 suffix={<img src={searchIcon} alt="search-icon" />}
                 className="custom-input"
               />
             </div>
           </div>
         </NavbarRow2Styled>
+
+        {/* Global Search Modal */}
+        <Modal
+          title={`🔍 Search Results for "${searchText || 'all'}"`}
+          open={showSearchModal}
+          onOk={() => setShowSearchModal(false)}
+          onCancel={() => setShowSearchModal(false)}
+          footer={null}
+          centered
+        >
+          <div className="py-2">
+            {searching ? (
+              <p className="text-muted text-center py-4">Searching Dojo database...</p>
+            ) : searchResults ? (
+              <div>
+                {searchResults.classes?.length > 0 && (
+                  <div className="mb-3">
+                    <h6 className="fw-bold text-primary mb-2">🥋 Classes & Sessions</h6>
+                    {searchResults.classes.map((c: any, idx: number) => (
+                      <div
+                        key={idx}
+                        className="p-2 border rounded-2 mb-2 cursor-pointer bg-light d-flex justify-content-between align-items-center"
+                        style={{ cursor: "pointer" }}
+                        onClick={() => {
+                          setShowSearchModal(false);
+                          navigate(c.route);
+                        }}
+                      >
+                        <div>
+                          <strong className="text-dark">{c.title}</strong>
+                          <div className="small text-muted">{c.subtitle}</div>
+                        </div>
+                        <span className="badge bg-primary">View</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {searchResults.schools?.length > 0 && (
+                  <div className="mb-3">
+                    <h6 className="fw-bold text-success mb-2">🏢 Martial Arts Academies</h6>
+                    {searchResults.schools.map((s: any, idx: number) => (
+                      <div
+                        key={idx}
+                        className="p-2 border rounded-2 mb-2 cursor-pointer bg-light d-flex justify-content-between align-items-center"
+                        style={{ cursor: "pointer" }}
+                        onClick={() => {
+                          setShowSearchModal(false);
+                          navigate(s.route);
+                        }}
+                      >
+                        <div>
+                          <strong className="text-dark">{s.title}</strong>
+                          <div className="small text-muted">{s.subtitle}</div>
+                        </div>
+                        <span className="badge bg-success">Dojo Profile</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {searchResults.users?.length > 0 && (
+                  <div>
+                    <h6 className="fw-bold text-dark mb-2">👤 Fighters & Instructors</h6>
+                    {searchResults.users.map((u: any, idx: number) => (
+                      <div
+                        key={idx}
+                        className="p-2 border rounded-2 mb-2 cursor-pointer bg-light d-flex justify-content-between align-items-center"
+                        style={{ cursor: "pointer" }}
+                        onClick={() => {
+                          setShowSearchModal(false);
+                          navigate(u.route);
+                        }}
+                      >
+                        <div>
+                          <strong className="text-dark">{u.title}</strong>
+                          <div className="small text-muted">{u.subtitle}</div>
+                        </div>
+                        <span className="badge bg-dark">Profile</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            ) : (
+              <p className="text-muted text-center py-4">No matching results found.</p>
+            )}
+          </div>
+        </Modal>
+
+        {/* Dojo Weather & Training Conditions Modal */}
+        <Modal
+          title="🌤️ Today's Dojo Training Conditions"
+          open={showWeatherModal}
+          onOk={() => setShowWeatherModal(false)}
+          onCancel={() => setShowWeatherModal(false)}
+          footer={null}
+          centered
+        >
+          <div className="p-3 text-center">
+            <div style={{ fontSize: "48px" }}>🥋 ☀️</div>
+            <h4 className="fw-bold mt-2">72°F • Optimal Training Conditions</h4>
+            <p className="text-muted mb-3">Main Dojo Air Conditioning: Active (68°F)</p>
+            <div className="row g-2 text-start p-3 bg-light rounded-3">
+              <div className="col-6">📍 <strong>Location:</strong> Los Angeles, CA</div>
+              <div className="col-6">🥋 <strong>Tatami Status:</strong> Sanitized & Open</div>
+              <div className="col-6">⏰ <strong>Peak Mat Hours:</strong> 05:00 PM - 08:30 PM</div>
+              <div className="col-6">💧 <strong>Hydration Station:</strong> Fully Stocked</div>
+            </div>
+          </div>
+        </Modal>
       </NavbarStyle>
     </>
   );

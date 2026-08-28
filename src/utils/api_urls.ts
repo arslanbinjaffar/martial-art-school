@@ -143,5 +143,25 @@ export const create_branch_url = "branch/create";
 export const edit_branch_url = "branch/edit";
 export const get_branch_by_school_id_url = "branch/getBySchoolId";
 
+// classes & timetable
+export const classes_list_url = "classes/list";
+export const classes_create_url = "classes/create";
+export const classes_book_url = "classes/book";
+export const classes_cancel_booking_url = "classes/cancel-booking";
+export const classes_my_bookings_url = "classes/my-bookings";
+
+// attendance & qr pass
+export const attendance_qr_token_url = "attendance/qr-token";
+export const attendance_scan_qr_url = "attendance/scan-qr";
+export const attendance_history_url = "attendance/history";
+
+// belt progression & sub accounts
+export const belts_my_progress_url = "belts/my-progress";
+export const belts_promote_student_url = "belts/promote-student";
+export const sub_accounts_url = "user/sub-accounts";
+export const sub_accounts_create_url = "user/sub-accounts/create";
+export const change_password_url = "auth/change-password";
+export const universal_search_url = "search";
+
 // key of token data in local storage of browser
 export const auth_token_key = "ennvision-admin:token";

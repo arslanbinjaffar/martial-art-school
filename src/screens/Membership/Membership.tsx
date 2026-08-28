@@ -1,8 +1,9 @@
 import React, { useState } from "react";
-import { Container, Row, Col, Card } from "react-bootstrap";
+import { Container, Row, Col, Card, Modal, Form } from "react-bootstrap";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import axios from "axios";
 import {
   fontFamilyBold,
   fontFamilyMedium,
@@ -13,11 +14,23 @@ import {
 } from "../../components/GlobalStyle";
 import CustomButton from "../../components/CustomButton/CustomButton";
 import Head from "../../components/Head/Head";
+import { base_url, charge_On_plan_url } from "../../utils/api_urls";
+import { useAppSelector } from "../../app/hooks";
+import { RootState } from "../../redux/store";
 
 const Membership = () => {
   const navigate = useNavigate();
   const [selectedBillingCycle, setSelectedBillingCycle] = useState<"monthly" | "yearly">("monthly");
   const [activePlanId, setActivePlanId] = useState<number>(2);
+
+  // Checkout Modal
+  const [showCheckoutModal, setShowCheckoutModal] = useState<boolean>(false);
+  const [selectedPlanForCheckout, setSelectedPlanForCheckout] = useState<any>(null);
+  const [cardNumber, setCardNumber] = useState<string>("4242 •••• •••• 4242");
+  const [processing, setProcessing] = useState<boolean>(false);
+
+  const loginData = useAppSelector((state: RootState) => state.loginData?.data);
+  const user = loginData?.userDetails;
 
   const plans = [
     {
@@ -72,10 +85,39 @@ const Membership = () => {
     },
   ];
 
-  const handleSubscribe = (plan: typeof plans[0]) => {
-    setActivePlanId(plan.id);
-    toast.success(`Selected ${plan.name} (${selectedBillingCycle} billing)`);
-    navigate("/payment");
+  const handleOpenCheckout = (plan: typeof plans[0]) => {
+    setSelectedPlanForCheckout(plan);
+    setShowCheckoutModal(true);
+  };
+
+  const handleConfirmSubscription = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedPlanForCheckout) return;
+
+    try {
+      setProcessing(true);
+      const price =
+        selectedBillingCycle === "monthly"
+          ? selectedPlanForCheckout.priceMonthly
+          : selectedPlanForCheckout.priceYearly;
+
+      const res = await axios.post(`${base_url}${charge_On_plan_url}`, {
+        userId: user?.id || 1,
+        planId: selectedPlanForCheckout.id,
+        amount: price,
+        currency: "USD",
+      });
+
+      if (res.data?.responseCode === 200 || res.status === 200) {
+        setActivePlanId(selectedPlanForCheckout.id);
+        toast.success(`Subscribed to ${selectedPlanForCheckout.name} successfully! Receipt generated.`);
+        setShowCheckoutModal(false);
+      }
+    } catch (err: any) {
+      toast.error(err?.response?.data?.responseMessage || "Failed to process subscription");
+    } finally {
+      setProcessing(false);
+    }
   };
 
   return (
@@ -142,10 +184,10 @@ const Membership = () => {
 
                     <div className="mt-4">
                       <CustomButton
-                        title={isCurrent ? "Current Plan" : "Choose Plan"}
-                        clicked={() => handleSubscribe(plan)}
-                        bgcolor={plan.popular ? lightBlue3 : primaryColor}
-                        color={plan.popular ? pureDark : whiteColor}
+                        title={isCurrent ? "Active Plan ✓" : "Choose Plan"}
+                        clicked={() => handleOpenCheckout(plan)}
+                        bgcolor={isCurrent ? "#10b981" : plan.popular ? lightBlue3 : primaryColor}
+                        color={isCurrent ? whiteColor : plan.popular ? pureDark : whiteColor}
                         width="100%"
                         padding="12px"
                         fontSize="16px"
@@ -158,6 +200,61 @@ const Membership = () => {
             );
           })}
         </Row>
+
+        {/* Checkout Modal */}
+        <Modal show={showCheckoutModal} onHide={() => setShowCheckoutModal(false)} centered>
+          <Modal.Header closeButton>
+            <Modal.Title className="fw-bold">🥋 Confirm Plan Subscription</Modal.Title>
+          </Modal.Header>
+          <Form onSubmit={handleConfirmSubscription}>
+            <Modal.Body className="p-4">
+              {selectedPlanForCheckout && (
+                <div>
+                  <div className="d-flex justify-content-between align-items-center mb-3 p-3 bg-light rounded-3">
+                    <div>
+                      <h5 className="mb-1 text-dark fw-bold">{selectedPlanForCheckout.name}</h5>
+                      <small className="text-muted text-capitalize">{selectedBillingCycle} recurring billing</small>
+                    </div>
+                    <div className="text-end">
+                      <h4 className="mb-0 text-primary fw-bold">
+                        ${selectedBillingCycle === "monthly" ? selectedPlanForCheckout.priceMonthly : selectedPlanForCheckout.priceYearly}
+                      </h4>
+                      <small className="text-muted">/{selectedBillingCycle === "monthly" ? "month" : "year"}</small>
+                    </div>
+                  </div>
+
+                  <Form.Group className="mb-3">
+                    <Form.Label className="fw-bold small">Payment Method</Form.Label>
+                    <Form.Control
+                      value={cardNumber}
+                      onChange={(e) => setCardNumber(e.target.value)}
+                      required
+                    />
+                    <small className="text-muted">Default Visa card ending in 4242</small>
+                  </Form.Group>
+                </div>
+              )}
+            </Modal.Body>
+            <Modal.Footer>
+              <button
+                type="button"
+                className="btn btn-light"
+                onClick={() => setShowCheckoutModal(false)}
+              >
+                Cancel
+              </button>
+              <CustomButton
+                title={processing ? "Processing..." : "Confirm & Subscribe"}
+                type="submit"
+                bgcolor={primaryColor}
+                color={whiteColor}
+                padding="10px 24px"
+                fontSize="14px"
+                fontFamily={fontFamilyBold}
+              />
+            </Modal.Footer>
+          </Form>
+        </Modal>
       </Container>
     </MembershipStyled>
   );
