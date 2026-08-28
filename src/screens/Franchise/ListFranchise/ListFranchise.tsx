@@ -110,6 +110,7 @@ const ListFranchise: React.FC = () => {
       {loading && <LoadingOverlay message="" />}
       <ListBranchStyled>
         <Table
+          
           columns={columns}
           dataSource={branchData?.data}
           title={() => <RenderTableTitle />}

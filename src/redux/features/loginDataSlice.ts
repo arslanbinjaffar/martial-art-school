@@ -45,15 +45,18 @@ const loginDataSlice = createSlice({
     },
     updateUserHandler: (
       state,
-      { payload: { firstName, lastName } }: PayloadAction<userDataTypes>
+      { payload }: PayloadAction<any>
     ) => {
-      console.log({ firstName, lastName }, "payload of update user detaisl");
       return produce(state, (draft) => {
-        if (draft.data !== null) {
+        if (draft.data !== null && draft.data.userDetails) {
           draft.data.userDetails = {
             ...draft.data.userDetails,
-            userFirstName: firstName,
-            userLastName: lastName,
+            ...(payload.firstName !== undefined && { userFirstName: payload.firstName }),
+            ...(payload.lastName !== undefined && { userLastName: payload.lastName }),
+            ...(payload.profilePictureURL !== undefined && {
+              profileImageURL: payload.profilePictureURL,
+              profilePictureURL: payload.profilePictureURL,
+            }),
           };
         }
       });

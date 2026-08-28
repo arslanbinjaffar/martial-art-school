@@ -11,7 +11,7 @@ export const ListBranchStyled = styled.div`
   background-color: #fff;
   padding: 16px;
   border-radius: 20px;
-
+  width:100%;
   .table-heading {
     font-size: 23px !important;
     font-family: ${fontFamilyBold} !important;

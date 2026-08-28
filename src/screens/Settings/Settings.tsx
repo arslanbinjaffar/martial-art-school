@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Container, Row, Col, Card, Form, Table, Spinner } from "react-bootstrap";
 import { useSearchParams } from "react-router-dom";
 import styled from "styled-components";
 import { toast } from "react-toastify";
 import axios from "axios";
+import { useDispatch } from "react-redux";
 import Head from "../../components/Head/Head";
 import CustomButton from "../../components/CustomButton/CustomButton";
 import {
@@ -21,6 +22,7 @@ import {
 } from "../../utils/api_urls";
 import { useAppSelector } from "../../app/hooks";
 import { RootState } from "../../redux/store";
+import { updateUserHandler } from "../../redux/features/loginDataSlice";
 
 export type SubAccountItem = {
   id: number;
@@ -33,7 +35,16 @@ export type SubAccountItem = {
   emergencyPhone?: string;
 };
 
+const MARTIAL_AVATARS = [
+  "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80",
+  "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80",
+  "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&auto=format&fit=crop&q=80",
+  "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&auto=format&fit=crop&q=80",
+];
+
 const Settings = () => {
+  const dispatch = useDispatch();
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [searchParams, setSearchParams] = useSearchParams();
   const initialTab = searchParams.get("tab") || "profile";
   const [activeTab, setActiveTab] = useState<string>(initialTab);
@@ -83,6 +94,23 @@ const Settings = () => {
     }
   }, [user]);
 
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      if (file.size > 5 * 1024 * 1024) {
+        toast.error("Image file size should be less than 5MB");
+        return;
+      }
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const base64String = reader.result as string;
+        setProfilePictureURL(base64String);
+        toast.info("New photo selected! Click 'Save Profile Changes' below to update.");
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   const fetchSubAccounts = async () => {
     try {
       setLoadingSubs(true);
@@ -131,7 +159,14 @@ const Settings = () => {
         profilePictureURL,
       });
       if (res.data?.responseCode === 200 || res.status === 200) {
-        toast.success("Profile information updated successfully!");
+        dispatch(
+          updateUserHandler({
+            firstName,
+            lastName,
+            profilePictureURL,
+          })
+        );
+        toast.success("Profile photo and information updated successfully!");
       }
     } catch (err: any) {
       toast.error(err?.response?.data?.responseMessage || "Failed to update profile");
@@ -246,17 +281,73 @@ const Settings = () => {
                     <span className="badge bg-primary px-3 py-2">Rank: 🥋 Active Fighter</span>
                   </div>
 
-                  <div className="d-flex align-items-center gap-3 p-3 bg-light rounded-3 mb-4 border">
-                    <div className="profile-avatar-circle">
-                      {profilePictureURL ? (
-                        <img src={profilePictureURL} alt="Profile" className="rounded-circle w-100 h-100 object-fit-cover" />
-                      ) : (
-                        <span>🥋</span>
+                  <div className="d-flex flex-column flex-sm-row align-items-sm-center justify-content-between gap-3 p-3 bg-light rounded-3 mb-4 border">
+                    <div className="d-flex align-items-center gap-3">
+                      <div className="profile-avatar-circle position-relative" style={{ overflow: "hidden" }}>
+                        {profilePictureURL ? (
+                          <img src={profilePictureURL} alt="Profile" className="rounded-circle w-100 h-100 object-fit-cover" />
+                        ) : (
+                          <span>🥋</span>
+                        )}
+                      </div>
+                      <div>
+                        <h5 className="mb-1 text-dark fw-bold">{firstName} {lastName}</h5>
+                        <p className="text-muted small mb-0">{emailAddress} • Member #{user?.id || 1}</p>
+                      </div>
+                    </div>
+
+                    <div className="d-flex flex-wrap gap-2 align-items-center">
+                      <input
+                        type="file"
+                        ref={fileInputRef}
+                        style={{ display: "none" }}
+                        accept="image/*"
+                        onChange={handleImageChange}
+                      />
+                      <button
+                        type="button"
+                        className="btn btn-sm btn-primary px-3 fw-bold"
+                        onClick={() => fileInputRef.current?.click()}
+                      >
+                        📷 Upload New Photo
+                      </button>
+                      {profilePictureURL && (
+                        <button
+                          type="button"
+                          className="btn btn-sm btn-outline-danger px-2"
+                          onClick={() => setProfilePictureURL("")}
+                          title="Remove photo"
+                        >
+                          Remove
+                        </button>
                       )}
                     </div>
-                    <div className="flex-grow-1">
-                      <h5 className="mb-1 text-dark fw-bold">{firstName} {lastName}</h5>
-                      <p className="text-muted small mb-0">{emailAddress} • Member #{user?.id || 1}</p>
+                  </div>
+
+                  {/* Preset Avatars */}
+                  <div className="mb-4 p-3 bg-light rounded-3 border">
+                    <div className="fw-bold small text-dark mb-2">Or Choose from Martial Arts Avatars:</div>
+                    <div className="d-flex gap-2">
+                      {MARTIAL_AVATARS.map((url, idx) => (
+                        <img
+                          key={idx}
+                          src={url}
+                          alt="Avatar preset"
+                          className="rounded-circle cursor-pointer border"
+                          style={{
+                            width: 44,
+                            height: 44,
+                            objectFit: "cover",
+                            cursor: "pointer",
+                            borderWidth: profilePictureURL === url ? 3 : 1,
+                            borderColor: profilePictureURL === url ? "#00B0E9" : "#cbd5e1",
+                          }}
+                          onClick={() => {
+                            setProfilePictureURL(url);
+                            toast.info("Avatar selected! Click 'Save Profile Changes' below.");
+                          }}
+                        />
+                      ))}
                     </div>
                   </div>
 
