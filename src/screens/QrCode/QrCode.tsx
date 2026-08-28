@@ -229,7 +229,7 @@ export default QrCode;
 const QrCodeStyled = styled.div`
   min-height: 80vh;
   background: #f8fafc;
-
+  width:100%;
   .page-title {
     font-size: 28px;
     font-family: ${fontFamilyBold};

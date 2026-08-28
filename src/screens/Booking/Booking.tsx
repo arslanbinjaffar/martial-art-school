@@ -230,7 +230,7 @@ export default Booking;
 const BookingStyled = styled.div`
   min-height: 80vh;
   background: #f8fafc;
-
+  width:100%;
   .page-title {
     font-size: 28px;
     font-family: ${fontFamilyBold};
@@ -258,7 +258,6 @@ const BookingStyled = styled.div`
       color: #64748b;
       cursor: pointer;
       transition: all 0.2s ease;
-
       &.active {
         background: #ffffff;
         color: #0f172a;

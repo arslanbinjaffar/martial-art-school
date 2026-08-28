@@ -53,6 +53,7 @@ import {
 } from "../../utils/api_urls";
 import { useAppSelector } from "../../app/hooks";
 import { RootState } from "../../redux/store";
+import createSchoolBanner from "../../assets/images/create_school_banner.svg";
 
 const Dashboard: React.FC = () => {
   const navigate = useNavigate();
@@ -451,6 +452,33 @@ export default Dashboard;
 
 const DashboardStyled = styled.div`
   background: transparent;
+
+  .banner-container {
+    background: linear-gradient(135deg, rgba(0, 176, 233, 0.88) 0%, rgba(0, 110, 160, 0.82) 50%, rgba(15, 23, 42, 0.88) 100%),
+      url(${createSchoolBanner});
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    border-radius: 20px;
+    padding: 36px 36px;
+    color: ${whiteColor};
+    box-shadow: 0 8px 24px rgba(0, 176, 233, 0.2);
+
+    .banner-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+
+    .banner-left {
+      max-width: 650px;
+    }
+
+    .custom-tag {
+      background: rgba(255, 255, 255, 0.2);
+      border: 1px solid rgba(255, 255, 255, 0.4);
       color: ${whiteColor};
       border-radius: 12px;
       padding: 3px 12px;
