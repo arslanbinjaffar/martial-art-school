@@ -196,8 +196,9 @@ function Navbar() {
   const profileItems: MenuProps["items"] = [
     {
       key: "profile-header",
+      onClick: () => navigate("/setting?tab=profile"),
       label: (
-        <div className="py-1">
+        <div className="py-1" style={{ cursor: "pointer" }}>
           <div className="fw-bold text-dark">
             {(user as any)?.userFirstName
               ? `${(user as any).userFirstName} ${(user as any).userLastName || ""}`
@@ -216,7 +217,7 @@ function Navbar() {
       key: "my-profile",
       icon: <UserOutlined />,
       label: "My Profile",
-      onClick: () => navigate("/"),
+      onClick: () => navigate("/setting?tab=profile"),
     },
     {
       key: "membership",
@@ -372,6 +373,8 @@ function Navbar() {
           onCancel={() => setShowSearchModal(false)}
           footer={null}
           centered
+          zIndex={9999}
+          getContainer={() => document.body}
         >
           <div className="py-2">
             {searching ? (
@@ -461,16 +464,18 @@ function Navbar() {
           onCancel={() => setShowWeatherModal(false)}
           footer={null}
           centered
+          zIndex={9999}
+          getContainer={() => document.body}
         >
           <div className="p-3 text-center">
-            <div style={{ fontSize: "48px" }}>🥋 ☀️</div>
-            <h4 className="fw-bold mt-2">72°F • Optimal Training Conditions</h4>
+            <div style={{ fontSize: "52px" }}>🥋 ☀️</div>
+            <h4 className="fw-bold mt-2 text-dark">72°F • Optimal Training Conditions</h4>
             <p className="text-muted mb-3">Main Dojo Air Conditioning: Active (68°F)</p>
-            <div className="row g-2 text-start p-3 bg-light rounded-3">
-              <div className="col-6">📍 <strong>Location:</strong> Los Angeles, CA</div>
-              <div className="col-6">🥋 <strong>Tatami Status:</strong> Sanitized & Open</div>
-              <div className="col-6">⏰ <strong>Peak Mat Hours:</strong> 05:00 PM - 08:30 PM</div>
-              <div className="col-6">💧 <strong>Hydration Station:</strong> Fully Stocked</div>
+            <div className="row g-2 text-start p-3 bg-light rounded-3 border">
+              <div className="col-6">📍 <strong className="text-dark">Location:</strong> Los Angeles, CA</div>
+              <div className="col-6">🥋 <strong className="text-dark">Tatami Status:</strong> Sanitized & Open</div>
+              <div className="col-6">⏰ <strong className="text-dark">Peak Mat Hours:</strong> 05:00 PM - 08:30 PM</div>
+              <div className="col-6">💧 <strong className="text-dark">Hydration Station:</strong> Fully Stocked</div>
             </div>
           </div>
         </Modal>

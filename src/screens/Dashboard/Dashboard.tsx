@@ -1,5 +1,30 @@
 import React, { useState, useEffect } from "react";
-import { Container, Row, Col, Card, ProgressBar, Spinner } from "react-bootstrap";
+import {
+  Row,
+  Col,
+  Card,
+  Progress,
+  Tag,
+  Badge,
+  Button,
+  Space,
+  Statistic,
+  Spin,
+  Timeline,
+  Avatar,
+} from "antd";
+import {
+  CheckCircleOutlined,
+  CalendarOutlined,
+  UserOutlined,
+  DollarOutlined,
+  QrcodeOutlined,
+  PlusOutlined,
+  TrophyOutlined,
+  ArrowRightOutlined,
+  EnvironmentOutlined,
+  ClockCircleOutlined,
+} from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import axios from "axios";
@@ -9,10 +34,16 @@ import CustomButton from "../../components/CustomButton/CustomButton";
 import {
   fontFamilyBold,
   fontFamilyMedium,
-  lightBlue3,
+  fontFamilyRegular,
   primaryColor,
+  tertiaryBlue,
+  tertiaryBlue2,
+  lightBlue3,
   pureDark,
+  lightDark,
   whiteColor,
+  secondaryGreen,
+  primaryRed,
 } from "../../components/GlobalStyle";
 import {
   base_url,
@@ -23,7 +54,7 @@ import {
 import { useAppSelector } from "../../app/hooks";
 import { RootState } from "../../redux/store";
 
-const Dashboard = () => {
+const Dashboard: React.FC = () => {
   const navigate = useNavigate();
   const loginData = useAppSelector((state: RootState) => state.loginData?.data);
   const user = loginData?.userDetails;
@@ -89,294 +120,329 @@ const Dashboard = () => {
 
   return (
     <DashboardStyled>
-      <Head title="Dojo Command Center" />
-      <Container fluid className="py-2 px-md-3">
-        {/* Welcome Header */}
-        <div className="welcome-banner mb-4 p-4 rounded-4 text-white d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
-          <div>
-            <span className="badge bg-white text-dark mb-2 px-3 py-1 fw-bold">🥋 Dojo Management Portal</span>
-            <h1 className="fw-bold mb-1">Welcome back, {userName}!</h1>
-            <p className="mb-0 text-white-50">
-              Here is what's happening at your martial arts school today. Track attendance, schedule classes, and manage student rankings.
+      <Head title="Dashboard - Martial Arts Academy" />
+
+      {/* Top Banner with EnnVisions Cyan & Blue Theme */}
+      <div className="banner-container">
+        <div className="banner-content">
+          <div className="banner-left">
+            <Tag color="#00B0E9" className="custom-tag">
+              🥋 Martial Arts School Portal
+            </Tag>
+            <h1 className="banner-title">Welcome back, {userName}!</h1>
+            <p className="banner-subtitle">
+              Manage your Dojo schedule, track belt progression milestones, and coordinate student attendance.
             </p>
           </div>
-          <div className="d-flex flex-wrap gap-2">
+          <div className="banner-actions">
             <CustomButton
               title="📱 Digital QR Pass"
               clicked={() => navigate("/qr-code")}
-              bgcolor={lightBlue3}
+              bgcolor={whiteColor}
               color={pureDark}
-              padding="10px 18px"
+              padding="10px 20px"
               fontSize="14px"
               fontFamily={fontFamilyBold}
             />
             <CustomButton
               title="+ Schedule Class"
               clicked={() => navigate("/classes")}
-              bgcolor="#ffffff"
-              color="#0f172a"
-              padding="10px 18px"
+              bgcolor={primaryColor}
+              color={whiteColor}
+              padding="10px 20px"
               fontSize="14px"
               fontFamily={fontFamilyBold}
             />
           </div>
         </div>
+      </div>
 
-        {/* KPI Metrics */}
-        <Row className="g-3 mb-4">
-          <Col xl={3} md={6}>
-            <Card className="metric-card">
-              <Card.Body className="p-3 d-flex align-items-center gap-3">
-                <div className="icon-box bg-primary-subtle text-primary">🥋</div>
-                <div>
-                  <span className="metric-lbl">Active Students</span>
-                  <h3 className="metric-val mb-0">142</h3>
-                  <small className="text-success fw-bold">↑ +12 this month</small>
-                </div>
-              </Card.Body>
-            </Card>
-          </Col>
+      {/* 4 KPI Metric Cards */}
+      <Row gutter={[16, 16]} className="mt-4">
+        <Col xs={24} sm={12} lg={6}>
+          <Card className="metric-card" bordered={false}>
+            <div className="d-flex align-items-center justify-content-between">
+              <div>
+                <span className="metric-title">Active Students</span>
+                <div className="metric-number">142</div>
+                <span className="metric-trend text-success">↑ +12 this month</span>
+              </div>
+              <div className="metric-icon-wrapper" style={{ background: tertiaryBlue }}>
+                <UserOutlined style={{ color: primaryColor, fontSize: 24 }} />
+              </div>
+            </div>
+          </Card>
+        </Col>
 
-          <Col xl={3} md={6}>
-            <Card className="metric-card">
-              <Card.Body className="p-3 d-flex align-items-center gap-3">
-                <div className="icon-box bg-success-subtle text-success">📅</div>
-                <div>
-                  <span className="metric-lbl">Live Classes Scheduled</span>
-                  <h3 className="metric-val mb-0">28</h3>
-                  <small className="text-muted">5 Disciplines active</small>
-                </div>
-              </Card.Body>
-            </Card>
-          </Col>
+        <Col xs={24} sm={12} lg={6}>
+          <Card className="metric-card" bordered={false}>
+            <div className="d-flex align-items-center justify-content-between">
+              <div>
+                <span className="metric-title">Classes Scheduled</span>
+                <div className="metric-number">28</div>
+                <span className="metric-trend text-muted">5 Disciplines active</span>
+              </div>
+              <div className="metric-icon-wrapper" style={{ background: "#ecfdf5" }}>
+                <CalendarOutlined style={{ color: secondaryGreen, fontSize: 24 }} />
+              </div>
+            </div>
+          </Card>
+        </Col>
 
-          <Col xl={3} md={6}>
-            <Card className="metric-card">
-              <Card.Body className="p-3 d-flex align-items-center gap-3">
-                <div className="icon-box bg-warning-subtle text-warning">⏱</div>
-                <div>
-                  <span className="metric-lbl">Dojo Check-ins Today</span>
-                  <h3 className="metric-val mb-0">{attended + 14}</h3>
-                  <small className="text-primary fw-bold">QR & Kiosk Scans</small>
-                </div>
-              </Card.Body>
-            </Card>
-          </Col>
+        <Col xs={24} sm={12} lg={6}>
+          <Card className="metric-card" bordered={false}>
+            <div className="d-flex align-items-center justify-content-between">
+              <div>
+                <span className="metric-title">Check-ins Today</span>
+                <div className="metric-number">{attended + 14}</div>
+                <span className="metric-trend text-primary">QR & Kiosk Scans</span>
+              </div>
+              <div className="metric-icon-wrapper" style={{ background: "#fffbeb" }}>
+                <QrcodeOutlined style={{ color: "#f59e0b", fontSize: 24 }} />
+              </div>
+            </div>
+          </Card>
+        </Col>
 
-          <Col xl={3} md={6}>
-            <Card className="metric-card">
-              <Card.Body className="p-3 d-flex align-items-center gap-3">
-                <div className="icon-box bg-info-subtle text-info">💰</div>
-                <div>
-                  <span className="metric-lbl">Monthly Revenue</span>
-                  <h3 className="metric-val mb-0">$8,420</h3>
-                  <small className="text-success fw-bold">98% Auto-renewed</small>
-                </div>
-              </Card.Body>
-            </Card>
-          </Col>
-        </Row>
+        <Col xs={24} sm={12} lg={6}>
+          <Card className="metric-card" bordered={false}>
+            <div className="d-flex align-items-center justify-content-between">
+              <div>
+                <span className="metric-title">Monthly Revenue</span>
+                <div className="metric-number">$8,420</div>
+                <span className="metric-trend text-success">98% Auto-renewed</span>
+              </div>
+              <div className="metric-icon-wrapper" style={{ background: tertiaryBlue }}>
+                <DollarOutlined style={{ color: primaryColor, fontSize: 24 }} />
+              </div>
+            </div>
+          </Card>
+        </Col>
+      </Row>
 
-        <Row className="g-4">
-          {/* Left Column: Belt Progression & Curriculum */}
-          <Col lg={7}>
-            <Card className="dashboard-card mb-4">
-              <Card.Body className="p-4">
-                <div className="d-flex justify-content-between align-items-center mb-3">
-                  <div>
-                    <h4 className="fw-bold text-dark mb-0">🥋 Student Belt Progression</h4>
-                    <small className="text-muted">Discipline: {beltProgress?.discipline || "Brazilian Jiu-Jitsu"}</small>
-                  </div>
-                  <span className="badge bg-primary px-3 py-2">
-                    {beltProgress?.currentBelt || "Blue Belt"} (2 Stripes)
-                  </span>
-                </div>
+      {/* Main Section */}
+      <Row gutter={[20, 20]} className="mt-3">
+        {/* Left Column: Belt Progression & Quick Management */}
+        <Col xs={24} lg={14}>
+          <Card className="content-card mb-3" bordered={false}>
+            <div className="d-flex justify-content-between align-items-center mb-3">
+              <div>
+                <h3 className="card-heading">🥋 Student Belt Progression</h3>
+                <span className="text-muted small">
+                  Discipline: {beltProgress?.discipline || "Brazilian Jiu-Jitsu"}
+                </span>
+              </div>
+              <Tag color="cyan" style={{ fontSize: 13, padding: "4px 12px", borderRadius: 12 }}>
+                {beltProgress?.currentBelt || "Blue Belt"} (2 Stripes)
+              </Tag>
+            </div>
 
-                <div className="belt-status-box p-3 bg-light rounded-3 mb-3 border">
-                  <div className="d-flex justify-content-between mb-2">
-                    <span className="fw-bold text-dark small">Attendance to Next Exam ({beltProgress?.nextBelt || "Purple Belt"})</span>
-                    <span className="text-primary fw-bold small">{attended} / {required} Classes ({progressPercent}%)</span>
-                  </div>
-                  <ProgressBar now={progressPercent} variant="primary" style={{ height: 10 }} />
-                  <p className="text-muted small mt-2 mb-0">
-                    🥋 Certificate: <code>{beltProgress?.certificateNo || "CERT-BJJ-2026-904"}</code> • Awarded by Master Rodrigo Silva
-                  </p>
-                </div>
+            <div className="belt-box">
+              <div className="d-flex justify-content-between mb-2">
+                <span className="fw-bold text-dark small">
+                  Classes Attended Towards Next Exam ({beltProgress?.nextBelt || "Purple Belt"})
+                </span>
+                <span className="text-primary fw-bold small">
+                  {attended} / {required} Classes ({progressPercent}%)
+                </span>
+              </div>
+              <Progress
+                percent={progressPercent}
+                strokeColor={{ "0%": "#00B0E9", "100%": "#3D86AF" }}
+                status="active"
+              />
+              <p className="text-muted small mt-2 mb-0">
+                🥋 Certificate: <code>{beltProgress?.certificateNo || "CERT-BJJ-2026-904"}</code> • Awarded by Master Rodrigo Silva
+              </p>
+            </div>
 
-                <h6 className="fw-bold text-dark mt-4 mb-3">Curriculum Belt Track</h6>
-                <div className="d-flex flex-wrap gap-2">
-                  {[
-                    { rank: "White Belt", done: true, color: "#e2e8f0", text: "#0f172a" },
-                    { rank: "Blue Belt", current: true, color: "#3b82f6", text: "#ffffff" },
-                    { rank: "Purple Belt", done: false, color: "#8b5cf6", text: "#ffffff" },
-                    { rank: "Brown Belt", done: false, color: "#78350f", text: "#ffffff" },
-                    { rank: "Black Belt", done: false, color: "#0f172a", text: "#ffffff" },
-                  ].map((b, idx) => (
-                    <div
-                      key={idx}
-                      className="px-3 py-2 rounded-2 border d-flex align-items-center gap-2"
-                      style={{
-                        backgroundColor: b.color,
-                        color: b.text,
-                        fontWeight: b.current ? "bold" : "normal",
-                        opacity: b.done || b.current ? 1 : 0.4,
-                      }}
-                    >
-                      <span>{b.done ? "✓" : b.current ? "★" : "○"}</span>
-                      <span>{b.rank}</span>
-                    </div>
-                  ))}
-                </div>
-              </Card.Body>
-            </Card>
-
-            {/* Quick Navigation Cards */}
-            <Card className="dashboard-card p-4">
-              <h4 className="fw-bold text-dark mb-3">⚡ Quick Management Actions</h4>
-              <Row className="g-3">
-                <Col sm={6}>
-                  <div
-                    className="action-tile p-3 rounded-3 border bg-light cursor-pointer"
-                    style={{ cursor: "pointer" }}
-                    onClick={() => navigate("/classes")}
-                  >
-                    <div className="tile-icon">🥋</div>
-                    <strong className="text-dark d-block">Manage Classes</strong>
-                    <small className="text-muted">Update timetable & assign Senseis</small>
-                  </div>
-                </Col>
-
-                <Col sm={6}>
-                  <div
-                    className="action-tile p-3 rounded-3 border bg-light cursor-pointer"
-                    style={{ cursor: "pointer" }}
-                    onClick={() => navigate("/branch/create")}
-                  >
-                    <div className="tile-icon">🏢</div>
-                    <strong className="text-dark d-block">Add New Branch</strong>
-                    <small className="text-muted">Register a new Dojo dojo facility</small>
-                  </div>
-                </Col>
-
-                <Col sm={6}>
-                  <div
-                    className="action-tile p-3 rounded-3 border bg-light cursor-pointer"
-                    style={{ cursor: "pointer" }}
-                    onClick={() => navigate("/membership")}
-                  >
-                    <div className="tile-icon">⭐</div>
-                    <strong className="text-dark d-block">Membership Tiers</strong>
-                    <small className="text-muted">Configure pricing & passes</small>
-                  </div>
-                </Col>
-
-                <Col sm={6}>
-                  <div
-                    className="action-tile p-3 rounded-3 border bg-light cursor-pointer"
-                    style={{ cursor: "pointer" }}
-                    onClick={() => navigate("/setting?tab=sub-account")}
-                  >
-                    <div className="tile-icon">👤</div>
-                    <strong className="text-dark d-block">Family Sub-Accounts</strong>
-                    <small className="text-muted">Manage child practitioner profiles</small>
-                  </div>
-                </Col>
-              </Row>
-            </Card>
-          </Col>
-
-          {/* Right Column: Today's Class Roster & Check-in Feed */}
-          <Col lg={5}>
-            <Card className="dashboard-card mb-4 p-4">
-              <div className="d-flex justify-content-between align-items-center mb-3">
-                <h4 className="fw-bold text-dark mb-0">📅 Today's Live Classes</h4>
-                <a
-                  href="#/classes"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    navigate("/classes");
+            <h4 className="sub-heading mt-4 mb-3">Curriculum Belt Ranks</h4>
+            <div className="d-flex flex-wrap gap-2">
+              {[
+                { rank: "White Belt", done: true, bg: "#f3f4f6", color: "#1f2937" },
+                { rank: "Blue Belt", current: true, bg: tertiaryBlue, color: primaryColor },
+                { rank: "Purple Belt", done: false, bg: "#faf5ff", color: "#7e22ce" },
+                { rank: "Brown Belt", done: false, bg: "#fef3c7", color: "#92400e" },
+                { rank: "Black Belt", done: false, bg: "#111827", color: "#ffffff" },
+              ].map((b, idx) => (
+                <div
+                  key={idx}
+                  className="belt-track-chip"
+                  style={{
+                    backgroundColor: b.bg,
+                    color: b.color,
+                    borderColor: b.current ? primaryColor : "#e5e7eb",
+                    borderWidth: b.current ? 2 : 1,
+                    fontWeight: b.current ? "bold" : "normal",
+                    opacity: b.done || b.current ? 1 : 0.6,
                   }}
-                  className="small text-primary fw-bold"
                 >
-                  View All
-                </a>
-              </div>
-
-              {loading ? (
-                <div className="text-center py-4">
-                  <Spinner animation="border" size="sm" variant="primary" />
+                  <span>{b.done ? "✓" : b.current ? "★" : "○"}</span>
+                  <span>{b.rank}</span>
                 </div>
-              ) : todayClasses.length === 0 ? (
-                <p className="text-muted small">No classes scheduled for today.</p>
-              ) : (
-                <div className="d-flex flex-column gap-3">
-                  {todayClasses.map((item) => (
-                    <div key={item.id} className="class-roster-item p-3 border rounded-3 bg-light">
-                      <div className="d-flex justify-content-between align-items-start">
-                        <span
-                          className="badge"
-                          style={{
-                            backgroundColor: `${item.tag_color || "#3b82f6"}20`,
-                            color: item.tag_color || "#3b82f6",
-                          }}
-                        >
-                          {item.discipline}
-                        </span>
-                        <small className="text-muted">{item.start_time} - {item.end_time}</small>
-                      </div>
+              ))}
+            </div>
+          </Card>
 
-                      <h6 className="fw-bold text-dark mt-2 mb-1">{item.title}</h6>
-                      <p className="text-muted small mb-2">🥋 {item.instructor_name} • 📍 {item.room_location}</p>
+          {/* Quick Management Tiles */}
+          <Card className="content-card" bordered={false}>
+            <h3 className="card-heading mb-3">⚡ Quick Management Station</h3>
+            <Row gutter={[12, 12]}>
+              <Col xs={24} sm={12}>
+                <div
+                  className="quick-action-tile"
+                  onClick={() => navigate("/classes")}
+                >
+                  <div className="tile-icon-box" style={{ background: tertiaryBlue }}>
+                    <CalendarOutlined style={{ color: primaryColor, fontSize: 20 }} />
+                  </div>
+                  <div>
+                    <strong className="text-dark d-block">Manage Classes</strong>
+                    <small className="text-muted">Timetable & trainer assign</small>
+                  </div>
+                </div>
+              </Col>
 
-                      <div className="d-flex justify-content-between align-items-center pt-2 border-top">
-                        <span className="small text-muted">{item.capacity_text || `${item.enrolled_count || 0}/${item.max_capacity} spots`}</span>
-                        <button
-                          type="button"
-                          className="btn btn-sm btn-primary px-3"
-                          disabled={bookingClassId === item.id}
-                          onClick={() => handleQuickBook(item)}
-                        >
-                          {bookingClassId === item.id ? "Booking..." : "Reserve Spot"}
-                        </button>
-                      </div>
+              <Col xs={24} sm={12}>
+                <div
+                  className="quick-action-tile"
+                  onClick={() => navigate("/branch/create")}
+                >
+                  <div className="tile-icon-box" style={{ background: "#ecfdf5" }}>
+                    <PlusOutlined style={{ color: secondaryGreen, fontSize: 20 }} />
+                  </div>
+                  <div>
+                    <strong className="text-dark d-block">Add New Branch</strong>
+                    <small className="text-muted">Register Dojo training facility</small>
+                  </div>
+                </div>
+              </Col>
+
+              <Col xs={24} sm={12}>
+                <div
+                  className="quick-action-tile"
+                  onClick={() => navigate("/membership")}
+                >
+                  <div className="tile-icon-box" style={{ background: "#fffbeb" }}>
+                    <TrophyOutlined style={{ color: "#f59e0b", fontSize: 20 }} />
+                  </div>
+                  <div>
+                    <strong className="text-dark d-block">Membership Plans</strong>
+                    <small className="text-muted">Passes, pricing & benefits</small>
+                  </div>
+                </div>
+              </Col>
+
+              <Col xs={24} sm={12}>
+                <div
+                  className="quick-action-tile"
+                  onClick={() => navigate("/setting?tab=sub-account")}
+                >
+                  <div className="tile-icon-box" style={{ background: tertiaryBlue }}>
+                    <UserOutlined style={{ color: primaryColor, fontSize: 20 }} />
+                  </div>
+                  <div>
+                    <strong className="text-dark d-block">Family Sub-Accounts</strong>
+                    <small className="text-muted">Junior & delegated profiles</small>
+                  </div>
+                </div>
+              </Col>
+            </Row>
+          </Card>
+        </Col>
+
+        {/* Right Column: Today's Live Classes & Check-in Stream */}
+        <Col xs={24} lg={10}>
+          <Card className="content-card mb-3" bordered={false}>
+            <div className="d-flex justify-content-between align-items-center mb-3">
+              <h3 className="card-heading mb-0">📅 Today's Live Classes</h3>
+              <Button
+                type="link"
+                className="p-0 text-primary fw-bold"
+                onClick={() => navigate("/classes")}
+              >
+                View All <ArrowRightOutlined />
+              </Button>
+            </div>
+
+            {loading ? (
+              <div className="text-center py-4">
+                <Spin />
+              </div>
+            ) : todayClasses.length === 0 ? (
+              <p className="text-muted small">No classes scheduled for today.</p>
+            ) : (
+              <div className="d-flex flex-column gap-3">
+                {todayClasses.map((item) => (
+                  <div key={item.id} className="class-roster-box">
+                    <div className="d-flex justify-content-between align-items-start">
+                      <Tag color="cyan" style={{ borderRadius: 6, fontWeight: "bold" }}>
+                        {item.discipline}
+                      </Tag>
+                      <span className="text-muted small">
+                        <ClockCircleOutlined /> {item.start_time} - {item.end_time}
+                      </span>
                     </div>
-                  ))}
-                </div>
-              )}
-            </Card>
 
-            {/* Recent Check-Ins Stream */}
-            <Card className="dashboard-card p-4">
-              <h4 className="fw-bold text-dark mb-3">⚡ Live Dojo Check-Ins</h4>
-              <div className="timeline-stream">
-                <div className="stream-item pb-3 border-bottom mb-2">
-                  <div className="d-flex justify-content-between">
-                    <strong className="text-dark small">Sensei Rodrigo Silva</strong>
-                    <span className="text-muted small">2 mins ago</span>
-                  </div>
-                  <p className="text-muted small mb-0">Scanned QR Check-In at Main Dojo Reception</p>
-                </div>
+                    <h4 className="class-title mt-2 mb-1">{item.title}</h4>
+                    <p className="text-muted small mb-2">
+                      🥋 {item.instructor_name} • <EnvironmentOutlined /> {item.room_location}
+                    </p>
 
-                <div className="stream-item pb-3 border-bottom mb-2">
-                  <div className="d-flex justify-content-between">
-                    <strong className="text-dark small">Junior Fighter Leo</strong>
-                    <span className="text-muted small">15 mins ago</span>
+                    <div className="d-flex justify-content-between align-items-center pt-2 border-top">
+                      <span className="small text-muted">
+                        {item.capacity_text || `${item.enrolled_count || 0}/${item.max_capacity} spots`}
+                      </span>
+                      <Button
+                        type="primary"
+                        size="small"
+                        style={{
+                          backgroundColor: primaryColor,
+                          borderColor: primaryColor,
+                          borderRadius: 6,
+                          fontWeight: "bold",
+                        }}
+                        loading={bookingClassId === item.id}
+                        onClick={() => handleQuickBook(item)}
+                      >
+                        Reserve Spot
+                      </Button>
+                    </div>
                   </div>
-                  <p className="text-muted small mb-0">Checked in for Karate Kata & Kumite Class</p>
-                </div>
-
-                <div className="stream-item">
-                  <div className="d-flex justify-content-between">
-                    <strong className="text-dark small">Master Jin-Woo Park</strong>
-                    <span className="text-muted small">1 hour ago</span>
-                  </div>
-                  <p className="text-muted small mb-0">Completed Taekwondo Sparring Session</p>
-                </div>
+                ))}
               </div>
-            </Card>
-          </Col>
-        </Row>
-      </Container>
+            )}
+          </Card>
+
+          {/* Dojo Check-In Timeline */}
+          <Card className="content-card" bordered={false}>
+            <h3 className="card-heading mb-3">⚡ Live Dojo Check-Ins</h3>
+            <Timeline>
+              <Timeline.Item color="#00B0E9">
+                <div>
+                  <strong className="text-dark small">Sensei Rodrigo Silva</strong>
+                  <span className="text-muted small ms-2">2 mins ago</span>
+                  <p className="text-muted small mb-0">Verified Check-In at Main Tatami</p>
+                </div>
+              </Timeline.Item>
+              <Timeline.Item color="#34C759">
+                <div>
+                  <strong className="text-dark small">Junior Fighter Leo</strong>
+                  <span className="text-muted small ms-2">15 mins ago</span>
+                  <p className="text-muted small mb-0">Checked in for Karate Kata session</p>
+                </div>
+              </Timeline.Item>
+              <Timeline.Item color="#C0922E">
+                <div>
+                  <strong className="text-dark small">Master Jin-Woo Park</strong>
+                  <span className="text-muted small ms-2">1 hour ago</span>
+                  <p className="text-muted small mb-0">Completed Sparring Assessment</p>
+                </div>
+              </Timeline.Item>
+            </Timeline>
+          </Card>
+        </Col>
+      </Row>
     </DashboardStyled>
   );
 };
@@ -384,60 +450,181 @@ const Dashboard = () => {
 export default Dashboard;
 
 const DashboardStyled = styled.div`
-  background: #f8fafc;
-  min-height: 85vh;
+  background: transparent;
 
-  .welcome-banner {
-    background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #2563eb 100%);
-    box-shadow: 0 10px 25px rgba(15, 23, 42, 0.15);
+  .banner-container {
+    background: linear-gradient(135deg, ${primaryColor} 0%, #008ebc 50%, #005a78 100%);
+    border-radius: 20px;
+    padding: 28px 32px;
+    color: ${whiteColor};
+    box-shadow: 0 8px 24px rgba(0, 176, 233, 0.2);
+
+    .banner-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+
+    .banner-left {
+      max-width: 650px;
+    }
+
+    .custom-tag {
+      background: rgba(255, 255, 255, 0.2);
+      border: 1px solid rgba(255, 255, 255, 0.4);
+      color: ${whiteColor};
+      border-radius: 12px;
+      padding: 3px 12px;
+      font-family: ${fontFamilyMedium};
+      margin-bottom: 8px;
+    }
+
+    .banner-title {
+      font-size: 26px;
+      font-family: ${fontFamilyBold};
+      color: ${whiteColor};
+      margin: 4px 0 6px 0;
+    }
+
+    .banner-subtitle {
+      font-size: 14px;
+      font-family: ${fontFamilyRegular};
+      color: rgba(255, 255, 255, 0.9);
+      margin-bottom: 0;
+    }
+
+    .banner-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
   }
 
   .metric-card {
     border-radius: 16px;
-    border: 1px solid #e2e8f0;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
-    background: #ffffff;
+    background: ${whiteColor};
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+    border: 1px solid #f0f0f0;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
 
-    .icon-box {
-      width: 48px;
-      height: 48px;
-      border-radius: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 22px;
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
     }
 
-    .metric-lbl {
-      font-size: 12px;
-      color: #64748b;
+    .metric-title {
+      font-size: 13px;
+      color: ${lightDark};
+      font-family: ${fontFamilyMedium};
       display: block;
+    }
+
+    .metric-number {
+      font-size: 26px;
+      font-family: ${fontFamilyBold};
+      color: ${pureDark};
+      margin: 2px 0;
+    }
+
+    .metric-trend {
+      font-size: 12px;
       font-family: ${fontFamilyMedium};
     }
 
-    .metric-val {
-      font-size: 24px;
-      font-family: ${fontFamilyBold};
-      color: #0f172a;
+    .metric-icon-wrapper {
+      width: 50px;
+      height: 50px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
   }
 
-  .dashboard-card {
+  .content-card {
     border-radius: 16px;
-    border: 1px solid #e2e8f0;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
-    background: #ffffff;
-  }
+    background: ${whiteColor};
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+    border: 1px solid #f0f0f0;
+    padding: 6px;
 
-  .action-tile {
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-    &:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
+    .card-heading {
+      font-size: 18px;
+      font-family: ${fontFamilyBold};
+      color: ${pureDark};
+      margin: 0;
     }
-    .tile-icon {
-      font-size: 24px;
-      margin-bottom: 6px;
+
+    .sub-heading {
+      font-size: 14px;
+      font-family: ${fontFamilyBold};
+      color: ${lightDark};
+    }
+
+    .belt-box {
+      background: ${tertiaryBlue};
+      border-radius: 14px;
+      padding: 16px;
+      border: 1px solid ${tertiaryBlue2};
+    }
+
+    .belt-track-chip {
+      padding: 6px 14px;
+      border-radius: 10px;
+      border: 1px solid #e5e7eb;
+      font-size: 13px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-family: ${fontFamilyMedium};
+    }
+
+    .quick-action-tile {
+      background: #fafafa;
+      border: 1px solid #f0f0f0;
+      border-radius: 12px;
+      padding: 12px 14px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+
+      &:hover {
+        background: ${tertiaryBlue};
+        border-color: ${primaryColor};
+        transform: translateY(-2px);
+      }
+
+      .tile-icon-box {
+        width: 40px;
+        height: 40px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+      }
+    }
+
+    .class-roster-box {
+      background: #fafafa;
+      border: 1px solid #f0f0f0;
+      border-radius: 12px;
+      padding: 14px;
+      transition: border-color 0.2s ease;
+
+      &:hover {
+        border-color: ${primaryColor};
+      }
+
+      .class-title {
+        font-size: 15px;
+        font-family: ${fontFamilyBold};
+        color: ${pureDark};
+      }
     }
   }
 `;
