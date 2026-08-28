@@ -14,6 +14,7 @@ type MenuItem = Required<MenuProps>["items"][number];
 
 const routeKeyMap: Record<string, string> = {
   dashboard: "/",
+  superAdmin: "/super-admin",
   createSchool: "/school/create",
   listbranch: "/branch/list",
   listFranchise: "/franchise/list",
@@ -22,6 +23,7 @@ const routeKeyMap: Record<string, string> = {
   classes: "/classes",
   booking: "/booking",
   "booking-current": "/booking?tab=current",
+  "booking-webinars": "/booking?tab=webinars",
   "booking-previous": "/booking?tab=previous",
   qrCode: "/qr-code",
   "setting-profile": "/setting?tab=profile",
@@ -42,6 +44,11 @@ const NavigationMenu = () => {
       key: "dashboard",
       label: "Dashboard",
       icon: getMenuIcon(dashboard),
+    },
+    {
+      key: "superAdmin",
+      label: "👑 Super Admin",
+      icon: getMenuIcon(membership),
     },
     {
       key: "createSchool",
@@ -75,12 +82,16 @@ const NavigationMenu = () => {
     },
     {
       key: "booking",
-      label: "Bookings",
+      label: "Bookings & Seminars",
       icon: getMenuIcon(booking),
       children: [
         {
           key: "booking-current",
           label: "Current Bookings",
+        },
+        {
+          key: "booking-webinars",
+          label: "💻 Live Masterclasses",
         },
         {
           key: "booking-previous",

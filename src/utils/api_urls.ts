@@ -165,8 +165,20 @@ export const sub_accounts_create_url = "sub-accounts/create";
 export const webinars_list_url = "classes/webinars";
 export const webinars_register_url = "classes/webinars/register";
 
+// conferencing & live video rooms
+export const conferencing_create_room_url = "conferencing/rooms/create";
+export const conferencing_get_room_url = "conferencing/rooms";
+export const conferencing_chat_url = "conferencing/rooms/chat";
+
+// super admin console
+export const super_admin_metrics_url = "super-admin/metrics";
+export const super_admin_schools_url = "super-admin/schools/all";
+export const super_admin_verify_url = "super-admin/schools/verify";
+export const super_admin_transactions_url = "super-admin/transactions/global";
+
 // transactions & billing history
 export const transactions_history_url = "getTransactionHistory";
+
 
 export const change_password_url = "auth/change-password";
 export const universal_search_url = "search";

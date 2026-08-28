@@ -27,12 +27,17 @@ import ListFranchise from "../screens/Franchise/ListFranchise/ListFranchise";
 import CreateFranchise from "../screens/Franchise/CreateFranchise/CreateFranchise";
 import EditFranchise from "../screens/Franchise/EditFranchise/EditFranchise";
 
+import SuperAdminDashboard from "../screens/SuperAdmin/SuperAdminDashboard";
+import LiveWebinarRoom from "../screens/Webinar/LiveWebinarRoom";
+import RoleRegister from "../screens/Register/RoleRegister";
+
 function AppRoutes() {
   return (
     <Routes>
       {/* Public Auth Routes */}
       <Route path="/login" element={<Login />} />
-      <Route path="/register" element={<CreateUser />} />
+      <Route path="/register" element={<RoleRegister />} />
+      <Route path="/register/legacy" element={<CreateUser />} />
       <Route path="/forget-password" element={<ForgetPassword />} />
       <Route path="/register/verify-otp" element={<Otp />} />
       <Route path="/register/create-new-password" element={<CreatePassword />} />
@@ -41,6 +46,8 @@ function AppRoutes() {
       <Route element={<AppLayout />}>
         <Route path="/" element={<Dashboard />} />
         <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/super-admin" element={<SuperAdminDashboard />} />
+        <Route path="/admin" element={<SuperAdminDashboard />} />
 
         {/* School & Franchise Management */}
         <Route path="/school/create" element={<CreateSchool />} />
@@ -58,9 +65,10 @@ function AppRoutes() {
         <Route path="/credit-card/create" element={<CreateCreditCard />} />
         <Route path="/add-credit-card" element={<CreateCreditCard />} />
 
-        {/* Martial Arts Classes, Bookings & Passes */}
+        {/* Martial Arts Classes, Bookings, Webinars & Passes */}
         <Route path="/classes" element={<Classes />} />
         <Route path="/booking" element={<Booking />} />
+        <Route path="/webinar/live/:roomId" element={<LiveWebinarRoom />} />
         <Route path="/qr-code" element={<QrCode />} />
 
         {/* Settings */}
