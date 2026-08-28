@@ -158,8 +158,16 @@ export const attendance_history_url = "attendance/history";
 // belt progression & sub accounts
 export const belts_my_progress_url = "belts/my-progress";
 export const belts_promote_student_url = "belts/promote-student";
-export const sub_accounts_url = "user/sub-accounts";
-export const sub_accounts_create_url = "user/sub-accounts/create";
+export const sub_accounts_url = "sub-accounts";
+export const sub_accounts_create_url = "sub-accounts/create";
+
+// webinars & online masterclasses
+export const webinars_list_url = "classes/webinars";
+export const webinars_register_url = "classes/webinars/register";
+
+// transactions & billing history
+export const transactions_history_url = "getTransactionHistory";
+
 export const change_password_url = "auth/change-password";
 export const universal_search_url = "search";
 

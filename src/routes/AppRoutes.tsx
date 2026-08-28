@@ -56,6 +56,7 @@ function AppRoutes() {
         <Route path="/membership" element={<Membership />} />
         <Route path="/payment" element={<PaymentAndWallet />} />
         <Route path="/credit-card/create" element={<CreateCreditCard />} />
+        <Route path="/add-credit-card" element={<CreateCreditCard />} />
 
         {/* Martial Arts Classes, Bookings & Passes */}
         <Route path="/classes" element={<Classes />} />
