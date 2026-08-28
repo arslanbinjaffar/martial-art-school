@@ -24,6 +24,7 @@ const routeKeyMap: Record<string, string> = {
   "booking-current": "/booking?tab=current",
   "booking-previous": "/booking?tab=previous",
   qrCode: "/qr-code",
+  "setting-profile": "/setting?tab=profile",
   "setting-sub-account": "/setting?tab=sub-account",
   "setting-change-password": "/setting?tab=change-password",
   "setting-delete-account": "/setting?tab=delete-account",
@@ -98,6 +99,10 @@ const NavigationMenu = () => {
       icon: getMenuIcon(setting),
       children: [
         {
+          key: "setting-profile",
+          label: "My Profile",
+        },
+        {
           key: "setting-sub-account",
           label: "Sub Account",
         },
@@ -139,7 +144,8 @@ const NavigationMenu = () => {
     if (location.search.includes("change-password")) selectedKey = "setting-change-password";
     else if (location.search.includes("enrolled-school")) selectedKey = "setting-enrolled-school";
     else if (location.search.includes("delete-account")) selectedKey = "setting-delete-account";
-    else selectedKey = "setting-sub-account";
+    else if (location.search.includes("sub-account")) selectedKey = "setting-sub-account";
+    else selectedKey = "setting-profile";
   }
 
   return (

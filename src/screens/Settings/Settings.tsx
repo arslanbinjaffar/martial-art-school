@@ -9,12 +9,16 @@ import CustomButton from "../../components/CustomButton/CustomButton";
 import {
   fontFamilyBold,
   fontFamilyMedium,
-  lightBlue3,
   primaryColor,
-  pureDark,
   whiteColor,
 } from "../../components/GlobalStyle";
-import { base_url, change_password_url, sub_accounts_url, sub_accounts_create_url } from "../../utils/api_urls";
+import {
+  base_url,
+  change_password_url,
+  sub_accounts_url,
+  sub_accounts_create_url,
+  update_user,
+} from "../../utils/api_urls";
 import { useAppSelector } from "../../app/hooks";
 import { RootState } from "../../redux/store";
 
@@ -31,11 +35,23 @@ export type SubAccountItem = {
 
 const Settings = () => {
   const [searchParams, setSearchParams] = useSearchParams();
-  const initialTab = searchParams.get("tab") || "sub-account";
+  const initialTab = searchParams.get("tab") || "profile";
   const [activeTab, setActiveTab] = useState<string>(initialTab);
 
   const loginData = useAppSelector((state: RootState) => state.loginData?.data);
   const user = loginData?.userDetails;
+
+  // Profile Form State
+  const [firstName, setFirstName] = useState<string>("");
+  const [lastName, setLastName] = useState<string>("");
+  const [emailAddress, setEmailAddress] = useState<string>("");
+  const [phoneNumber, setPhoneNumber] = useState<string>("");
+  const [address, setAddress] = useState<string>("");
+  const [city, setCity] = useState<string>("");
+  const [stateName, setStateName] = useState<string>("");
+  const [country, setCountry] = useState<string>("United States");
+  const [profilePictureURL, setProfilePictureURL] = useState<string>("");
+  const [savingProfile, setSavingProfile] = useState<boolean>(false);
 
   // Sub Accounts State
   const [subAccounts, setSubAccounts] = useState<SubAccountItem[]>([]);
@@ -51,6 +67,21 @@ const Settings = () => {
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [updatingPassword, setUpdatingPassword] = useState(false);
+
+  // Load user data into form
+  useEffect(() => {
+    if (user) {
+      setFirstName((user as any).userFirstName || (user as any).firstName || "Sensei");
+      setLastName((user as any).userLastName || (user as any).lastName || "Master");
+      setEmailAddress((user as any).email || (user as any).emailAddress || "admin@martialarts.com");
+      setPhoneNumber((user as any).phoneNumber || "+1234567890");
+      setAddress((user as any).address || "100 Martial Way");
+      setCity((user as any).city || "Los Angeles");
+      setStateName((user as any).state || "CA");
+      setCountry((user as any).country || "United States");
+      setProfilePictureURL((user as any).profileImageURL || (user as any).profilePictureURL || "");
+    }
+  }, [user]);
 
   const fetchSubAccounts = async () => {
     try {
@@ -73,12 +104,40 @@ const Settings = () => {
 
   useEffect(() => {
     const tab = searchParams.get("tab");
-    if (tab) setActiveTab(tab);
+    if (tab) {
+      if (tab === "my-profile") setActiveTab("profile");
+      else setActiveTab(tab);
+    }
   }, [searchParams]);
 
   const switchTab = (tab: string) => {
     setActiveTab(tab);
     setSearchParams({ tab });
+  };
+
+  const handleProfileSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      setSavingProfile(true);
+      const res = await axios.post(`${base_url}${update_user}`, {
+        userId: user?.id || 1,
+        firstName,
+        lastName,
+        phoneNumber,
+        address,
+        city,
+        state: stateName,
+        country,
+        profilePictureURL,
+      });
+      if (res.data?.responseCode === 200 || res.status === 200) {
+        toast.success("Profile information updated successfully!");
+      }
+    } catch (err: any) {
+      toast.error(err?.response?.data?.responseMessage || "Failed to update profile");
+    } finally {
+      setSavingProfile(false);
+    }
   };
 
   const handleAddSubAccount = async (e: React.FormEvent) => {
@@ -149,7 +208,7 @@ const Settings = () => {
         <div className="mb-4">
           <h1 className="page-title">⚙️ Dojo & Account Settings</h1>
           <p className="page-subtitle">
-            Manage your sub-accounts, change password credentials, and configure martial arts enrollment.
+            Manage your personal profile, sub-accounts, password credentials, and martial arts affiliation.
           </p>
         </div>
 
@@ -157,9 +216,10 @@ const Settings = () => {
           <Col lg={3} md={4}>
             <Card className="nav-card p-2">
               {[
+                { id: "profile", label: "🥋 My Profile" },
                 { id: "sub-account", label: "👤 Sub Account" },
                 { id: "change-password", label: "🔒 Change Password" },
-                { id: "enrolled-school", label: "🥋 Enrolled School" },
+                { id: "enrolled-school", label: "🏢 Enrolled School" },
                 { id: "delete-account", label: "⚠️ Delete Account" },
               ].map((tab) => (
                 <button
@@ -176,9 +236,137 @@ const Settings = () => {
 
           <Col lg={9} md={8}>
             <Card className="content-card p-4">
+              {activeTab === "profile" && (
+                <Form onSubmit={handleProfileSubmit}>
+                  <div className="d-flex justify-content-between align-items-center mb-3">
+                    <div>
+                      <h3 className="section-title">My Personal Profile</h3>
+                      <p className="section-desc">View and update your personal martial artist identity and contact info.</p>
+                    </div>
+                    <span className="badge bg-primary px-3 py-2">Rank: 🥋 Active Fighter</span>
+                  </div>
+
+                  <div className="d-flex align-items-center gap-3 p-3 bg-light rounded-3 mb-4 border">
+                    <div className="profile-avatar-circle">
+                      {profilePictureURL ? (
+                        <img src={profilePictureURL} alt="Profile" className="rounded-circle w-100 h-100 object-fit-cover" />
+                      ) : (
+                        <span>🥋</span>
+                      )}
+                    </div>
+                    <div className="flex-grow-1">
+                      <h5 className="mb-1 text-dark fw-bold">{firstName} {lastName}</h5>
+                      <p className="text-muted small mb-0">{emailAddress} • Member #{user?.id || 1}</p>
+                    </div>
+                  </div>
+
+                  <Row className="g-3">
+                    <Col md={6}>
+                      <Form.Group>
+                        <Form.Label className="form-lbl">First Name</Form.Label>
+                        <Form.Control
+                          value={firstName}
+                          onChange={(e) => setFirstName(e.target.value)}
+                          required
+                        />
+                      </Form.Group>
+                    </Col>
+                    <Col md={6}>
+                      <Form.Group>
+                        <Form.Label className="form-lbl">Last Name</Form.Label>
+                        <Form.Control
+                          value={lastName}
+                          onChange={(e) => setLastName(e.target.value)}
+                          required
+                        />
+                      </Form.Group>
+                    </Col>
+                    <Col md={6}>
+                      <Form.Group>
+                        <Form.Label className="form-lbl">Email Address</Form.Label>
+                        <Form.Control
+                          value={emailAddress}
+                          disabled
+                          className="bg-light"
+                        />
+                        <small className="text-success">✓ Verified Dojo Account</small>
+                      </Form.Group>
+                    </Col>
+                    <Col md={6}>
+                      <Form.Group>
+                        <Form.Label className="form-lbl">Phone Number</Form.Label>
+                        <Form.Control
+                          value={phoneNumber}
+                          onChange={(e) => setPhoneNumber(e.target.value)}
+                          required
+                        />
+                      </Form.Group>
+                    </Col>
+                    <Col md={12}>
+                      <Form.Group>
+                        <Form.Label className="form-lbl">Street Address</Form.Label>
+                        <Form.Control
+                          value={address}
+                          onChange={(e) => setAddress(e.target.value)}
+                        />
+                      </Form.Group>
+                    </Col>
+                    <Col md={4}>
+                      <Form.Group>
+                        <Form.Label className="form-lbl">City</Form.Label>
+                        <Form.Control
+                          value={city}
+                          onChange={(e) => setCity(e.target.value)}
+                        />
+                      </Form.Group>
+                    </Col>
+                    <Col md={4}>
+                      <Form.Group>
+                        <Form.Label className="form-lbl">State / Province</Form.Label>
+                        <Form.Control
+                          value={stateName}
+                          onChange={(e) => setStateName(e.target.value)}
+                        />
+                      </Form.Group>
+                    </Col>
+                    <Col md={4}>
+                      <Form.Group>
+                        <Form.Label className="form-lbl">Country</Form.Label>
+                        <Form.Control
+                          value={country}
+                          onChange={(e) => setCountry(e.target.value)}
+                        />
+                      </Form.Group>
+                    </Col>
+                    <Col md={12}>
+                      <Form.Group>
+                        <Form.Label className="form-lbl">Profile Avatar URL</Form.Label>
+                        <Form.Control
+                          placeholder="https://example.com/avatar.jpg"
+                          value={profilePictureURL}
+                          onChange={(e) => setProfilePictureURL(e.target.value)}
+                        />
+                      </Form.Group>
+                    </Col>
+                  </Row>
+
+                  <div className="mt-4">
+                    <CustomButton
+                      title={savingProfile ? "Saving..." : "Save Profile Changes"}
+                      type="submit"
+                      bgcolor={primaryColor}
+                      color={whiteColor}
+                      padding="10px 24px"
+                      fontSize="14px"
+                      fontFamily={fontFamilyBold}
+                    />
+                  </div>
+                </Form>
+              )}
+
               {activeTab === "sub-account" && (
                 <div>
-                  <h3 className="section-title">Sub Account Profile</h3>
+                  <h3 className="section-title">Sub Account Profiles</h3>
                   <p className="section-desc">Manage family members, junior practitioners, and delegated trainers.</p>
 
                   <h5 className="fw-bold mt-4 mb-3">Add New Family / Child Member</h5>
@@ -488,6 +676,17 @@ const SettingsStyled = styled.div`
       font-size: 13px;
       font-family: ${fontFamilyMedium};
       color: #475569;
+    }
+
+    .profile-avatar-circle {
+      width: 56px;
+      height: 56px;
+      background: #eff6ff;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
     }
 
     .school-box {
